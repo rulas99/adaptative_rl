@@ -5,10 +5,29 @@
 \section{Background}
 \label{sec:background}
 
-\subsection{Reinforcement Learning}
-\label{subsec:rl}
+In \ac{RL}, intelligent agents learn to map environmental situations (environment states) to actions to maximize a numerical reward signal they receive from the environment, in the long term~\cite{sutton18}. \ac{RL} agents are defined by
+$\mathcal{S}$: the state space, consisting of all relevant states of the environment,
+$\mathcal{A}$: the action space, i.e. the set of all actions an agent can perform that affect the environment, and the reward $r$: the numerical signal encoding the positive or negative impact of the action at each execution step.
 
-The classic RL problem rest in markov decission processes, defined as:
+Q learning~\cite{watkins92} is a model-free implementation of the widely used model
+is \ac{RL}. The long-term quality of an action performed at a given state is computed iteratively in a series of steps and is represented by a Q value,
+$\mathit{Q(s,a)}$.
+Formally, each execution step $t$ captures information from the environment and maps it to a state
+{\color{purple}$s_t$} $\in \mathcal{S}$ in its state space. It then selects an
+action {\color{purple}$a_t$} $\in \mathcal{A}$ from its action space and executes it. The agent
+receives a reward {\color{Bittersweet}$r_t$} from the environment when it moves to the next state
+$s_{t+1} \in \mathcal{S}$. The reward is used to update the optimality of performing the
+action {\color{Mulberry}$a_t$} at state {\color{purple}$s_t$}. The agent's goal is to learn
+a policy (\i.e. the best-fit action for each state) that maximizes the reward of the
+long-run behavior. The learning rate {\color{NavyBlue} $\alpha$} determines how much new experiences 
+overwrite previously learned experiences, and the discount factor {\color{RoyalBlue} $\gamma$} 
+determines how much future rewards are discounted so that agents prioritize immediate actions and 
+can plan the best long-term actions. At each time step $t$, the Q value of an action 
+{\color{purple}$a_{t+1}$} taken in state {\color{purple}$s_{t+1}$}, $Q(s_{t+1}, a_{t+1})$, is updated by 
+the Bellman learning equation as follows:
+
+\vspace{1em}
+\input{equations/bellman}
 
 
 
