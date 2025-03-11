@@ -266,21 +266,23 @@
 \newcommand{\spy}[1]{\lstinline[style=py]{#1}}
 
 
-%% Petri nets
-\usepackage[version=0.96]{pgf}
+%% Equations
 \usepackage{tikz}
+\usepackage[export]{adjustbox}
+\usetikzlibrary{positioning,shadows,trees,mindmap}
 \usetikzlibrary{arrows, shapes, backgrounds}
 \usetikzlibrary{decorations.pathreplacing}
 \usetikzlibrary{shapes.misc}
-\usetikzlibrary{petri}\tikzstyle{place}=[circle,thick,draw=black!75,minimum size=5mm]
-\tikzstyle{iplace}=[circle,dashed,thick,draw=black!75,minimum size=5mm]
-\tikzstyle{itransition}=[rectangle,draw,thick,fill=black,minimum size=1mm]
-\tikzstyle{etransition}=[rectangle,draw,thick,minimum size=1mm]
-\tikzstyle{ctransition}=[rectangle,draw,color=black!45,thick,fill=black!45,minimum size=1mm]
-
-\tikzstyle{copn}=
- [node distance=1.3cm, >=stealth', bend angle=45, auto,
-  font=\fontsize{8}{8}\selectfont]
+\usepackage[edges]{forest}
+\usetikzlibrary{arrows.meta}
+\colorlet{linecol}{black!75}
+\usepackage{xkcdcolors} % xkcd colors
+\usetikzlibrary{tikzmark}
+\usetikzlibrary{calc}
+% Commands for Highlighting text -- non tikz method
+\newcommand{\highlight}[2]{\colorbox{#1!17}{#2}}
+%\newcommand{\highlight}[2]{\colorbox{#1!17}{$#2$}}
+\newcommand{\highlightdark}[2]{\colorbox{#1!47}{#2}}
 
   
 %----[ Commands ]---
@@ -295,35 +297,9 @@
 
 \renewcommand{\emptyset}{\varnothing} % Redefine LaTeX version with AMS version
 
+% Commands
 
-
-% Contexts
-\newcommand{\ctx}[1]{\texttt{\textsc{#1}}}
-
-% Petri nets
-
-\newcommand{\petrinet}[5][]
-  {\ensuremath{\mathopen{<}{#2}_{#1},{#3}_{#1},{#4}_{#1},{#5}_{#1}\mathclose{>}}}
-
-% CoPNs
-
-\newcommand{\copn}[7][]
-  {\ensuremath{\mathopen{<}
-      {#2}_{#1},{#3}_{#1},{#4}_{#1},{#5}_{#1},{#6}_{#1},{#7}_{#1}
-      \mathclose{>}}}
-
-\WithSuffix\newcommand\copn*[1][]{\copn[#1]{P}{T}{f}{f_\circ}{\rho}{m_0}}
-
-\newcommand{\clause}[3]
-  {\ensuremath{#1 in T: \ifblank{#2}{}{#2 \Rightarrow} #3}}
-
-% Context dependency relations
-
-\newcommand{\exclusion}[2]{\ctx{#1}$\square$\---$\square$\ctx{#2}}
-\newcommand{\weakInclusion}[2]{\ctx{#1}--$\rhd$\ctx{#2}}
-\newcommand{\strongInclusion}[2]{\ctx{#1}--$\blacktriangleright$\ctx{#2}}
-\newcommand{\requirement}[2]{\ctx{#1}--$\LHD$\ctx{#2}}
-
+\newcommand{\adaptiverl}{\textsc{NEED A NAME}\xspace}
 
 %comments
 % xcolor
@@ -333,6 +309,10 @@
 \definecolor{idea}{rgb}{.1, .7, .0}
 \definecolor{missing}{rgb}{.9, .1, .0}
 \definecolor{OliveGreen}{rgb}{0,0.6,0.3}
+\definecolor{Bittersweet}{rgb}{0.996,0.435,0.369}
+\definecolor{RoyalBlue}{rgb}{0.25,0.41,0.88}
+\definecolor{NavyBlue}{rgb}{0.0,0.4,0.8}
+\definecolor{Mulberry}{rgb}{0.77,0.29,0.54}
 
 
 

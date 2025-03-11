@@ -6,20 +6,33 @@
 \label{sec:related}
 
 
-Reinforcement-learning (RL) algorithms are increasingly utilized to solve traffic signal control
-problems. Despite the popularity of RL algorithms, however, researchers have struggled to create versions
-that converge due to the non-stationary nature of traffic environments. According to the basic theory of a
-Markov decision process (MDP), an RL algorithm can work only when the MDP environment is stationary.
-That is, the stationarity is secured when both transition and reward functions are fixed even though they are
-unknown. The RL environment for controlling the traffic signals of a single intersection, however, often
-violates this stationarity constraint. Whenever a signal phase has been given a fixed state, the probability of
-encountering a different state cannot be a constant. This is because the traffic signal phases implemented in
-neighboring intersections largely affect the next state of the intersection of concern.\cite{meta-rl-traffic}
+\ac{RL} algorithms are increasingly utilized to solve traffic signal control problems. Despite the popularity 
+of RL algorithms, however, researchers have struggled to create versions that converge due to the 
+non-stationary nature of traffic environments. According to the basic theory of a \ac{MDP}, an \ac{RL} 
+algorithm can work only when the \ac{MDP} environment is stationary.
+That is, the stationarity is secured when both transition and reward functions are fixed even though they 
+are unknown. The \ac{RL} environment for controlling the traffic signals of a single intersection, 
+however, often violates this stationarity constraint. Whenever a signal phase has been given a fixed 
+state, the probability of encountering a different state cannot be a constant. This is because the traffic 
+signal phases implemented in neighboring intersections largely affect the next state of the intersection 
+of concern~\cite{meta-rl-traffic}.
 
-Tokic purposes in 2010, a methodology for adaptative epsilon greedy based on values and boltzman distribution.~\cite{tokic2010}
+~\citet{tokic2010} propose a methodology for adaptive epsilon greedy based on values and Boltzman distribution.
 
-Mignon showed an implementation of an epsilon greedy algorithm in 2018.~\cite{mignon2017adaptive}
+~\citet{mignon2017adaptive} show an implementation of an epsilon greedy algorithm.
 
+\ac{CONRL}~\cite{gueriau19}
+
+%%
+\subsection{Life-long Learning}
+
+
+%%
+\subsection{Transfer Learning}
+
+
+%%
+\subsection{Model Distillation}
 
 
 \endinput
