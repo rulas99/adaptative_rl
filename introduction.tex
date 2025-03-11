@@ -4,13 +4,16 @@
 \section{Introduction}
 \label{sec:introduction}
 
-\acf{RL} is a \ac{ML} approach in which an agent learns to solve a problem by trial and error in 
-interaction with the environment. \ac{RL} formalizes the agent’s goal, taking into account the set 
-of environment states, and the set of possible actions to execute in each state. Agents have an 
-associated reward model, so that for each given action taken at a given state, agents receive a 
-scalar reward, reflecting the desirability of the outcome (\ie positive reward or a punishment). 
-The purpose of the agent is to maximize the total cumulative reward received to reach its goal, 
-from any given initial state~\cite{sutton98}.
+\acf{RL} is a subset of \ac{ML} techniques in which an agent learns by interacting with an environment through trial and error. The agent receives scalar rewards or punishments based on its actions, aiming to maximize cumulative long-term rewards~\cite{sutton98}. Traditional RL algorithms, such as Q-Learning, assume stationary \acp{MDP}, where transition probabilities and reward functions are constant over time~\cite{meta-rl-traffic}. However, this assumption restricts RL's effectiveness in real-world environments, which often exhibit non-stationary characteristics like evolving state distributions, varying reward dynamics, and changing action spaces~\cite{khetarpal2022continualreinforcementlearningreview}.
+
+To overcome these limitations, our work adopts the \acf{CRL} paradigm, where agents continuously adapt to environmental changes~\cite{abel2023definitioncontinualreinforcementlearning}. Approaches such as meta-learning and transfer learning have shown promise within \ac{CRL}. Meta-learning allows an agent to \emph{learn how to learn}, enhancing adaptability in new contexts~\cite{beck2024surveymetareinforcementlearning}, while transfer learning leverages prior knowledge to accelerate learning in related tasks~\cite{chen2022transferredqlearning}.
+
+This paper introduces \adaptiverl, a tabular RL algorithm based on Q-Learning that incorporates adaptive mechanisms inspired by \ac{CRL}. Our method effectively addresses non-stationary environments by continuously updating its learning strategy. Existing literature highlights RL's suitability for self-adaptive systems, given its capacity to dynamically adjust behavior in response to environmental feedback~\cite{HENRICHS2022106940}. However, real-world scenarios such as traffic control present substantial challenges due to inherent non-stationary dynamics~\cite{meta-rl-traffic}.
+
+We validate \adaptiverl in a self-adaptive system context, specifically applied to traffic signal control at intersections, a scenario where signal phases continuously influence state transitions and rewards~\cite{meta-rl-traffic}. By demonstrating the effectiveness of \adaptiverl under these conditions, we underline its suitability for self-adaptive systems, particularly those relying on streaming data where concept drift may occurs, making efficient adaptation essential.
+
+This paper is structured as follows: Section~\ref{sec:background} introduces theoretical foundations relevant to our implementation. Section~\ref{sec:related} reviews related work. Section~\ref{sec:implementation} presents the \adaptiverl algorithm. Section~\ref{sec:validation} describes our validation approach in traffic signal control and discusses results. Finally, Section~\ref{sec:conclusion} offers conclusions and future research directions.
+
 
 
 
