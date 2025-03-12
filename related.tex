@@ -5,34 +5,22 @@
 \section{Related Work}
 \label{sec:related}
 
+Reinforcement Learning (RL) inherently deals with the critical trade-off between exploration and exploitation, which significantly influences the performance of the learned policy. As stated by \citet{sutton98}, an agent must explore sufficiently to avoid settling on suboptimal solutions, yet excessive exploration can lead to inefficient training. Hence, determining an optimal balance between these two strategies is crucial for achieving high-quality solutions.
 
-\ac{RL} algorithms are increasingly utilized to solve traffic signal control problems. Despite the popularity 
-of RL algorithms, however, researchers have struggled to create versions that converge due to the 
-non-stationary nature of traffic environments. According to the basic theory of a \ac{MDP}, an \ac{RL} 
-algorithm can work only when the \ac{MDP} environment is stationary.
-That is, the stationarity is secured when both transition and reward functions are fixed even though they 
-are unknown. The \ac{RL} environment for controlling the traffic signals of a single intersection, 
-however, often violates this stationarity constraint. Whenever a signal phase has been given a fixed 
-state, the probability of encountering a different state cannot be a constant. This is because the traffic 
-signal phases implemented in neighboring intersections largely affect the next state of the intersection 
-of concern~\cite{meta-rl-traffic}.
+Several adaptive strategies have been proposed to manage this balance dynamically. \citet{mignon2017adaptive} introduced an adaptive implementation of the classic ε-greedy policy, highlighting the effectiveness of dynamically adjusting ε values rather than maintaining them statically. They particularly demonstrated how an adaptive approach enhanced performance in both stationary and non-stationary environments by employing the Page-Hinkley Test (PH-test) for detecting environmental concept drifts.
 
-~\citet{tokic2010} propose a methodology for adaptive epsilon greedy based on values and Boltzman distribution.
+Building on the exploration-exploitation dilemma, \citet{norman2024firstexploreexploitmetalearningsolve} proposed First-Explore, a meta-RL approach utilizing distinct policies dedicated to exploration and exploitation. Unlike conventional methods that directly optimize cumulative rewards, First-Explore trains these two separate policies and later combines them to form an inference policy that strategically explores initially, sacrificing immediate rewards for greater cumulative future gains. This strategy specifically addresses the limitations faced by existing methods that tend to prematurely converge to suboptimal solutions due to inadequate early exploration.
 
-~\citet{mignon2017adaptive} show an implementation of an epsilon greedy algorithm.
+Hyperparameter optimization, particularly the learning rate, also plays a crucial role in training effective RL models. A well-known example is the Adam optimizer introduced by \citet{kingma2017adammethodstochasticoptimization}, which dynamically adjusts the learning rate based on past gradient information to facilitate more efficient training convergence. Extending this line of research, \citet{dynamicrlalpha} proposed a bandit-based dynamic learning rate approach tailored for deep RL scenarios. Their method adaptively selects optimal learning rates at different training stages, demonstrating substantial performance improvements by considering the non-stationarity inherent to RL tasks.
 
-\ac{CONRL}~\cite{gueriau19}
+Moreover, transfer learning strategies, like the Transferred Q-Learning proposed by \citet{chen2022transferredqlearning}, have shown significant improvements in the convergence rate when leveraging data from similar RL tasks. Their approach emphasizes the vertical information cascading along multiple RL task stages and provides theoretical guarantees demonstrating faster convergence rates and reduced regret bounds when applying transfer learning under similarity assumptions.
 
-%%
-\subsection{Life-long Learning}
+These methods align closely with the broader concept of Continual Reinforcement Learning (CRL). \citet{khetarpal2022continualreinforcementlearningreview} define CRL as a setting where "the best agents never stop learning," contrasting with traditional RL approaches, which typically treat learning as finding a static solution rather than an ongoing adaptive process.
 
+Accordingly, various studies have shown RL as a potent tool for self-adaptive systems in real-world applications~\cite{HENRICHS2022106940}. Notable examples include \citet{iotdynamicrl}, who employed adaptive ε-greedy policies to dynamically adjust exploration-exploitation trade-offs for IoT security in edge computing, and \citet{networkdynamicrl}, who integrated RL with active learning and concept drift detection mechanisms for network monitoring to effectively identify potential threats.
 
-%%
-\subsection{Transfer Learning}
+Finally, our research applies these advanced RL methodologies within the domain of Intelligent Traffic Management—particularly in traffic signal control, which is an established application area for self-adaptive systems~\cite{HENRICHS2022106940}. Notably, \citet{meta-rl-traffic} addressed traffic signal control non-stationarity through a meta-RL model that dynamically switches reward functions based on traffic flow saturation levels. Furthermore, recent works by \citet{Swapno2024} and \citet{MORENOMALO2024124178} have successfully demonstrated the effectiveness of Deep Q-Networks (DQN) in optimizing traffic signal control, achieving substantial improvements in terms of reduced waiting times and queue lengths. Our approach is inspired by these models, utilizing a similar state-action space configuration based on the number of vehicles per lane, with phase durations as defined actions, thus contributing further to efficient and sustainable urban mobility.
 
-
-%%
-\subsection{Model Distillation}
 
 
 \endinput
