@@ -5,12 +5,21 @@
 \section{Validation}
 \label{sec:validation}
 
-This section presents our validation case studies and the results obtained from the execution of \adaptiverl with respect to the state-of-the-art.
-
+This section presents our validation case studies and the results obtained from the execution of \adaptiverl with respect to the state-of-the-art. 
 %%%%
 \subsection{Scenarios}
 
-For the evaluation scenarios we use two case studies taken from the literature in \ac{RL}. The first scenario is based on traffic light management~\cite{} 
+The evaluation is situated in the domain of Intelligent Traffic Management, particularly in traffic signal 
+control, which is an established application area for self-adaptive 
+systems~\cite{HENRICHS2022106940}. meta-\ac{RL} has been used in traffic signal control in 
+non-stationarity scenarios that dynamically switch reward functions based on traffic flow saturation 
+levels. As a baseline of our work we use a \acf{DQN} method to optimize traffic signal control, achieving 
+substantial improvements in terms of reduced waiting times and queue 
+lengths~\cite{Swapno2024,MORENOMALO2024124178}.
+
+Our scenario consists of a state-action space configuration based on the number of vehicles per lane, with phase durations as defined actions, thus contributing further to efficient and sustainable urban mobility.
+\authorcomment[missing]{NC}{Scenario description}
+
 
 %%%%
 \subsection{Results}
