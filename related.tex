@@ -5,23 +5,57 @@
 \section{Related Work}
 \label{sec:related}
 
-\ac{RL} inherently deals with the critical trade-off between exploration and exploitation, which significantly influences the performance of the learned policy. An agent must explore sufficiently to avoid settling on suboptimal solutions, yet excessive exploration can lead to inefficient training. Hence, determining an optimal balance between these two strategies is crucial for achieving high-quality solutions.~\cite{sutton98}
+\ac{RL} inherently deals with the critical trade-off between exploration and exploitation, which 
+significantly influences the performance of the learned policy. An agent must explore sufficiently to 
+avoid settling for suboptimal solutions, yet excessive exploration can lead to inefficient training. 
+Hence, determining an optimal balance between these two strategies is crucial for achieving 
+high-quality solutions~\cite{sutton98}.
 
-Many adaptive strategies have been proposed to manage this balance dynamically. First ~\citet{tokic2010} and then ~\citet{mignon2017adaptive} introduced adaptive implementations of the classic $\epsilon-greedy$ policy, highlighting the effectiveness of dynamically adjusting $\epsilon$ values rather than maintaining them statically. ~\citet{mignon2017adaptive} particularly demonstrated how an adaptive approach enhanced performance in both stationary and non-stationary environments by employing the Page-Hinkley Test (PH-test) for detecting environmental concept drifts.
+Many adaptive strategies have been proposed to manage this balance dynamically. ~\citet{tokic2010} 
+and then~\citet{mignon2017adaptive} introduce adaptive implementations of the classic 
+$\epsilon-greedy$ policy, highlighting the effectiveness of dynamically adjusting $\epsilon$ values 
+rather than maintaining them statically. ~\citet{mignon2017adaptive} demonstrate how an adaptive 
+approach enhanced performance in both stationary and non-stationary environments by employing 
+the Page-Hinkley Test (PH-test) for detecting environmental concept drifts.
 
-Building on the exploration-exploitation dilemma, \citet{norman2024firstexploreexploitmetalearningsolve} proposed First-Explore, a meta-RL approach utilizing distinct policies dedicated to exploration and exploitation. Unlike conventional methods that directly optimize cumulative rewards, First-Explore trains these two separate policies and later combines them to form an inference policy that strategically explores initially for $k$ episodes, sacrificing immediate rewards for greater cumulative future gains. This strategy specifically addresses the limitations faced by existing methods that tend to prematurely converge to suboptimal solutions due to inadequate early exploration.
+Building on the exploration-exploitation dilemma, \citet{norman2024firstexploreexploitmetalearningsolve} 
+propose First-Explore, a meta-\ac{RL} approach utilizing distinct policies dedicated to exploration 
+and exploitation. Unlike conventional methods that directly optimize cumulative rewards, First-Explore 
+trains these two separate policies and later combines them to form an inference policy that strategically 
+explores initially for $k$ episodes, sacrificing immediate rewards for greater cumulative future gains. 
+This strategy specifically addresses the limitations faced by existing methods that tend to prematurely 
+converge to suboptimal solutions due to inadequate early exploration.
 
-Hyperparameter optimization, particularly the learning rate, also plays a crucial role in training effective \ac{RL} models. A well-known example is the Adam optimizer introduced by \citet{kingma2017adammethodstochasticoptimization}, which dynamically adjusts the learning rate based on past gradient information to facilitate more efficient training convergence. Extending this line of research, \citet{dynamicrlalpha} proposed a dynamic learning rate approach tailored for deep \ac{RL} scenarios. Their method adaptively selects optimal learning rates at different training stages, demonstrating substantial performance improvements by considering the non-stationarity inherent to \ac{RL} tasks.
+Hyperparameter optimization, particularly the learning rate, also plays a crucial role in training 
+effective \ac{RL} models. A well-known example is the Adam 
+optimizer~\cite{kingma2017adammethodstochasticoptimization}, which dynamically adjusts the learning 
+rate based on past gradient information to facilitate more efficient training convergence. Extending 
+this line of research, \citet{dynamicrlalpha} propose a dynamic learning rate approach tailored for deep 
+\ac{RL} scenarios. Their method adaptively selects optimal learning rates at different training stages, 
+demonstrating substantial performance improvements by considering the non-stationarity inherent to 
+\ac{RL} tasks.
 
-Also, transfer learning strategies, like the Transferred Q-Learning proposed by \citet{chen2022transferredqlearning}, have demonstrated improvements in convergence rates. By reusing previous knowledge from similar tasks, showing that these methods effectively accelerate the learning process.
+Transfer learning strategies, like the Transferred Q-Learning~\cite{chen2022transferredqlearning}, 
+have demonstrated improvements in convergence rates. By reusing previous knowledge from similar 
+tasks, showing that these methods effectively accelerate the learning process.
 
-The methods mentioned above, related to the adaptivity of learning parameters and the reuse of previous knowledge, closely align with the concept of \ac{CRL}~\cite{khetarpal2022continualreinforcementlearningreview}. \citet{abel2023definitioncontinualreinforcementlearning} define \ac{CRL} as a setting in which "the best agents never stop learning," contrasting this perspective with traditional \ac{RL} approaches, which typically treat learning as the identification of a static solution rather than an ongoing adaptive process.
+The methods mentioned above, related to the adaptivity of learning parameters and the reuse of 
+previous knowledge, closely align with the concept of 
+\ac{CRL}~\cite{khetarpal2022continualreinforcementlearningreview}. 
+\citet{abel2023definitioncontinualreinforcementlearning} define \ac{CRL} as a setting in which "the 
+best agents never stop learning," contrasting this perspective with traditional \ac{RL} approaches, 
+which typically treat learning as the identification of a static solution rather than an ongoing adaptive 
+process.
 
-Accordingly, various studies have shown \ac{RL} as a potent tool for self-adaptive systems in real-world applications~\cite{HENRICHS2022106940}. Notable examples of \ac{RL} implementations include \citet{iotdynamicrl}, who employed adaptive $\epsilon-greedy$ policies to dynamically adjust exploration-exploitation trade-offs for IoT security in edge computing, and \citet{networkdynamicrl}, who integrated \ac{RL} with active learning and concept drift detection mechanisms (like $PH-Test$) for network monitoring to effectively identify potential threats.
+Various studies have shown \ac{RL} as a potent tool for self-adaptive systems in real-world 
+applications~\cite{HENRICHS2022106940}. Notable examples of \ac{RL} implementations 
+include the use of adaptive $\epsilon-greedy$ policies to dynamically adjust exploration-exploitation 
+trade-offs for \ac{IOT} security in edge computing~\cite{iotdynamicrl}, the integration of \ac{RL} 
+with active learning and concept drift detection mechanisms (like PH-Test) for network monitoring to 
+effectively identify potential threats~\cite{networkdynamicrl}, or the use of \ac{RL} macro actions to 
+continuously learn adaptation strategies~\cite{cardozo23}.
 
-Finally, our research applies these advanced \ac{RL} methodologies within the domain of Intelligent Traffic Management, particularly in traffic signal control, which is an established application area for self-adaptive systems~\cite{HENRICHS2022106940}. Notably, \citet{meta-rl-traffic} addressed traffic signal control non-stationarity through a meta-\ac{RL} model that dynamically switches reward functions based on traffic flow saturation levels. Furthermore, recent works by \citet{Swapno2024} and \citet{MORENOMALO2024124178} have successfully demonstrated the effectiveness of \acf{DQN} in optimizing traffic signal control, achieving substantial improvements in terms of reduced waiting times and queue lengths. Our approach is inspired by these models, utilizing a similar state-action space configuration based on the number of vehicles per lane, with phase durations as defined actions, thus contributing further to efficient and sustainable urban mobility.
-
+Our approach compares with the state-of-the-art in that 
 
 
 \endinput
-
