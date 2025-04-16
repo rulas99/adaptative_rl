@@ -23,6 +23,13 @@ This error measures the discrepancy between the agent’s predicted reward and t
 \end{equation}
 In this formulation, $\alpha$ is the base learning rate, and $\alpha_{max}$ represents its upper bound (e.g., 0.99). The parameter $k$ modulates the sensitivity of the learning rate to the TD error, requiring careful tuning depending on the specific characteristics of the environment and learning context. High TD errors trigger a larger learning rate, promoting faster updates during exploration, while lower TD errors result in more stable, conservative learning during exploitation phases.
 
+\begin{figure}
+    \centering
+    \includegraphics[width=0.75\columnwidth]{figures/alpha.png}
+    \caption{Figure description}
+    \label{fig:alpha}
+  \end{figure}
+
 Following the methodologies of~\citet{mignon2017adaptive} and~\citet{networkdynamicrl}, we implement the Page-Hinkley test (PH-test) to detect significant shifts in the reward distribution at the end of each episode:
 \begin{equation}
     \label{eq:ph_test}
@@ -36,6 +43,13 @@ Building on the concept drift detection mechanism, and inspired by~\citet{mignon
     \epsilon^* = \epsilon_{min} + (1-\epsilon_{min}) e^{-ct}
 \end{equation}
 Here, $\epsilon_{min}$ (e.g., 0.1) is the minimal exploration rate, $c$ controls the rate of decay, and $t$ is the timestep. A higher value of $c$ results in faster decay, enabling the agent to swiftly return to exploitation after sufficient exploration. This adaptive exploration ensures the agent maintains a balance between exploring new environment dynamics and leveraging established knowledge. It is crucial to mantain high levels of exploration after a concept drift is concistenly detected, so the agetn can learn new policies  without fogetting previously learned ones.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.75\columnwidth]{figures/epsilon.png}
+    \caption{Figure description}
+    \label{fig:epsilon}
+  \end{figure}
 
 These adaptive mechanisms equip the agent to effectively manage learning under varying and unpredictable conditions, enabling continuous adaptation and efficient knowledge transfer between different environmental states. This approach allows the agent to rapidly respond to new information without discarding previously learned knowledge, achieving greater resilience and performance stability over its lifespan. 
 
