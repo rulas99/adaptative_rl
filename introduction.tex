@@ -26,11 +26,12 @@ mechanisms inspired by \ac{CRL} to account for environment changes in the goal/r
 or in the action space available to an agent. Our work is motivated by the suitability of \ac{RL} for 
 self-adaptive systems, given its capacity to dynamically adjust behavior in response to environmental 
 feedback~\cite{HENRICHS2022106940}. However, real-world scenarios such as traffic control 
-present substantial challenges due to inherent non-stationary dynamics~\cite{meta-rl-traffic}. 
-Moreover, the problem of environment changes to the state space have been 
-addressed~\cite{gueriau19}, while adaptations to the goals or action space remain an open question.
+present substantial challenges due to their inherent non-stationary dynamics~\cite{meta-rl-traffic}. 
+We note, the problem of environment changes to the state space has been addressed~\cite{gueriau19}, 
+while adaptations to the goals (\ie rewards) or action space remain an open question.
 
-Our method effectively addresses non-stationary environments by continuously updating its learning strategy. 
+Our method effectively addresses non-stationary environments by continuously monitoring and 
+updating agents' learning strategy. 
 
 We validate \adaptiverl using a self-adaptive systems context, specifically applied to traffic signal 
 control at city intersections. In our scenario signal phases continuously influence state transitions 
