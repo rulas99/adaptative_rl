@@ -30,7 +30,7 @@ In this formulation, $\alpha$ denotes the base learning rate (e.g., 0.1), while 
 \begin{figure*}
     \centering
     \includegraphics[width=\textwidth]{figures/alpha.png}
-    \caption{Behavior of dynamic learning rate ($\alpha^*$) over Non-Stationary GridWorld experiments. Notice how $\alpha^*$ increases when the agent is exploring $\rightarrow$ high TD error ($\varepsilon>0.2$) and decreases when the agent is exploiting (low TD error), achieving a fast convergence during exploration and a stable learning during exploitation.}
+    \caption{Behavior of dynamic learning rate ($\alpha^*$) over Non-Stationary GridWorld experiments. Notice how $\alpha^*$ increases when the agent is exploring $\rightarrow$ high TD error and decreases when the agent is exploiting (low TD error), achieving a fast convergence during exploration and a stable learning during exploitation.}
     \label{fig:alpha}
 \end{figure*}
 
@@ -38,26 +38,44 @@ Following the methodologies of~\citet{mignon2017adaptive} and~\citet{networkdyna
 
 Building on the concept drift detection mechanism and inspired by~\citet{mignon2017adaptive}, we adaptively increase the exploration rate ($\varepsilon$) whenever the PH-test detects a concept drift. This approach promotes exploration immediately following environmental changes, enabling the agent to acquire new knowledge by temporarily adopting an exploration-focused policy. To ensure adequate exploration, the agent maintains this elevated exploration rate for a period (until rewards stabilize, i.e., no further drifts are detected) before $\varepsilon$ resumes its usual decay toward a minimal value, thereby returning to the exploitation phase.
 
-This adaptive exploration mechanism ensures the agent maintains an effective balance between exploring new environment dynamics and leveraging previously acquired knowledge. It is crucial to sustain high exploration levels after consistent concept drift detection, so the agent can learn new policies without forgetting previously learned ones. In Figure~\ref{fig:epsilon}, we illustrate the behavior of the dynamic exploration rate ($\varepsilon^*$) in our Non-Stationary GridWorld experiments
+This adaptive exploration mechanism ensures the agent maintains an effective balance between exploring new environment dynamics and leveraging previously acquired knowledge. It is crucial to sustain high exploration levels after consistent concept drift detection, so the agent can learn new policies without forgetting previously learned ones. In Figure~\ref{fig:dynamic-eps}, we illustrate the behavior of the dynamic exploration rate ($\varepsilon^*$) in our Non-Stationary GridWorld experiments
 
 \begin{figure*}
     \centering
     \includegraphics[width=\textwidth]{figures/epsilon.png}
     \caption{Behavior of the dynamic exploration rate ($\varepsilon^*$) in Non-Stationary GridWorld experiments. Notice how $\varepsilon^*$ increases each time a concept drift is detected by the PH-test and remains high until the agent consistently achieves the expected rewards (i.e., no further concept drift and stable rewards). Afterward, $\varepsilon^*$ begins to decay toward its minimum value allowing to explode the acquired knowledge.}
-    \label{fig:epsilon}
+    \label{fig:dynamic-eps}
 \end{figure*}
 
 These adaptive mechanisms equip the agent to effectively manage learning under varying and unpredictable conditions, enabling continuous adaptation and efficient knowledge transfer between different environmental states. This approach allows the agent to rapidly respond to new information without discarding previously learned knowledge, achieving greater resilience and performance stability over its lifespan. In continous, we present a GridWorld example to illustrate \adaptiverl's behavior in am environment with non-stationary reward function and compare it with a standard Q-learning agent.
 
 %%%%
-\subsection{Agent adaptation to different goals}
+\subsection{Agent Adaptation to Different Goals}
+\label{sec:experiments}
 
+To evaluate \adaptiverl's ability to adapt to environmental changes involving a non-stationary reward function—and to compare its performance with traditional Q-learning—we design a $9\times 9$ GridWorld environment. In this setting, each cell yields a reward of $-1$, except for the goal state. The agent, starting at the center of the grid, can move in four directions (up, down, left, right) and receives a positive reward of $+100$ only upon reaching the goal cell, which is initially located at the top-left corner. Every 300 episodes, after the agent is expected to have learned the optimal policy, we introduce a concept drift by relocating the goal cell to the diagonally opposite corner (bottom right), alternating the goal position between the top-left and bottom-right corners. This process is repeated for a total of 1500 episodes, requiring the agent to detect and rapidly adapt its policy to achieve convergence following each drift event. Figure~\ref{fig:r-change} shows the GridWorld environment and the induced concept drift configuration for the experiment.
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=\textwidth]{figures/r_change.png}
+    \caption{GridWorld environment with non-stationary reward function. The agent starts at the center, and its goal is initially located at the top-left corner. Every 300 episodes, the goal is moved to its diagonal opposite, so the goal state alternates between the top-left and bottom-right corners. The agent is expected to detect the concept drift and rapidly adapt its policy to achieve convergence after each drift event.}
+    \label{fig:r-change}
+\end{figure*}
+
+We run the experiment a thousand times with two agents: a standard Q-learning agent and an \adaptiverl agent. The standard Q-learning agent uses a fixed learning rate ($\alpha=0.1$) and a fixed exploration decayment rate ($\varepsilon=0.1$), while the \adaptiverl agent employs the adaptive mechanisms described in Section~\ref{sec:implementation}. We evaluate the agents' performance based on the times it converged to a optimal policy for each reward change, how many steps it takes and the total steps to complete de 1500 episodes. The Table 1
+
+\begin{table}
+    \centering
+    \caption{Table with multirow and multicolumns definitions}
+    \input{tables/known}
+    \label{tab:multi}
+  \end{table}
 
 \begin{figure*}
     \centering
     \includegraphics[width=\textwidth]{figures/trad_eps.png}
     \caption{Behavior of the dynamic exploration rate ($\varepsilon^*$) in Non-Stationary GridWorld experiments. Notice how $\varepsilon^*$ increases each time a concept drift is detected by the PH-test and remains high until the agent consistently achieves the expected rewards (i.e., no further concept drift and stable rewards). Afterward, $\varepsilon^*$ begins to decay toward its minimum value allowing to explode the acquired knowledge.}
-    \label{fig:epsilon}
+    \label{fig:static-eps}
 \end{figure*}
 
 %%%%
