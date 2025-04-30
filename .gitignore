@@ -178,3 +178,5 @@ main-blx.bib
 *.out
 main.run.xml
 main.fdb_latexmk
+*.synctex(busy)
+*.fls
