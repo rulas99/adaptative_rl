@@ -56,13 +56,12 @@ Figure~\ref{fig:traffic-learning-curve} plots the cumulative mean reward (over t
 
 Initially, both agents improve steadily. After the first drift, \adaptiverl promptly increases exploration, exploits its new actions $(7,3)$ and $(3,7)$, and regains performance within a few hundred episodes. In contrast, the standard agent endures a deep, slow recovery. The built-in penalty for wasted green time ensures \adaptiverl does not “over‐serve” when queues shrink, automatically balancing old and new phases without discarding any actions.
 
-Quantitatively, over 10 001 episodes:
+Quantitatively, over 10 000 episodes:
 \begin{itemize}
   \item \adaptiverl achieves a higher average reward (–415 vs.\ –530) and a smaller worst‐case drop (-770 vs.\ –792).
-  \item The first drift recovery is 2× faster (≈300 vs.\ 600 episodes to return to pre-drift reward).
+  \item add more
 \end{itemize}
 
-\subsection{Discussion}
 This traffic‐signal case confirms that \adaptiverl can:
 \begin{enumerate}
   \item Detect and react to non-stationary congestion via the PH-test, boosting exploration exactly when needed and the adaptive mechanisms that distinguish \adaptiverl.
