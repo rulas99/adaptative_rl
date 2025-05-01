@@ -58,7 +58,7 @@ In the equation, \lrate{\alpha} corresponds to the base learning rate (e.g., 0.1
 \begin{figure*}
     \centering
     \includegraphics[width=\textwidth]{figures/alpha.png}
-    \caption{Adaptive behavior of the dynamic learning rate ($\alpha^*$) in Non-Stationary GridWorld experiments. Notice how $\alpha^*$ increases during exploration (i.e., when the TD error is high) and decreases during exploitation (i.e., when the TD error is low), enabling rapid convergence when exploring and stable learning during exploitation.}
+    \caption{\adaptiverl's adaptive behavior of the dynamic learning rate ($\alpha^*$) in Non-Stationary GridWorld experiments. Notice how $\alpha^*$ increases during exploration phases (when the TD error is high) and decreases during exploitation phases (when the TD error is low), enabling rapid convergence during exploration and stable learning during exploitation.}
     \label{fig:alpha}
 \end{figure*}
 
@@ -95,7 +95,7 @@ running example.
 \begin{figure*}
     \centering
     \includegraphics[width=\textwidth]{figures/eps}
-    \caption{Adaptive behavior of the dynamic exploration rate ($\varepsilon^*$) in Non-Stationary GridWorld experiments: Notice how $\varepsilon^*$ increases each time a concept drift is detected by the PH-test and remains elevated until the agent consistently achieves the expected rewards (i.e., no further concept drift and stable rewards). Subsequently, $\varepsilon^*$ begins to decay toward its minimum value, enabling the agent to exploit the acquired knowledge.}
+    \caption{\adaptiverl's adaptive behavior of the dynamic exploration rate ($\varepsilon^*$) in Non-Stationary GridWorld experiments. Observe how $\varepsilon^*$ increases whenever a concept drift is detected by the PH-test and remains elevated until the agent consistently achieves the expected rewards (i.e., no further drift and stable rewards). Once stability is reached, $\varepsilon^*$ decays toward its minimum value, allowing the agent to exploit the acquired knowledge.}
     \label{fig:dynamic-eps}
 \end{figure*}
 
@@ -108,20 +108,20 @@ To evaluate \adaptiverl's ability to adapt to environmental changes induced by a
 \begin{figure*}
     \centering
     \includegraphics[width=\textwidth]{figures/rewards_change.png}
-    \caption{GridWorld environment with a non-stationary reward function: the agent starts at the center and aims for the goal, which alternates between the top-left and bottom-right corners every 300 episodes.}
+    \caption{Non-Stationary GridWorld: Concept drift is induced by relocating the reward. The agent starts at the center and must reach the goal, which alternates between the top-left and bottom-right corners every 300 episodes.}
     \label{fig:r-change}
 \end{figure*}
 
 We compare two agents over 1,000 independent runs:  
 \begin{itemize}
-  \item A \emph{standard Q-learning} agent, with fixed learning rate $\alpha=0.1$ and a fixed exponential decay for the exploration rate.
+  \item A \emph{Standard Q-learning} agent, with fixed learning rate $\alpha=0.1$ and a fixed exponential decay for the exploration rate.
   \item A \emph{\adaptiverl} agent, employing the adaptive learning-rate and exploration-rate mechanisms described in above.
 \end{itemize}
 We measure (1) the number of episodes required to re-converge after each reward change, and (2) the total number of steps across all 1,500 episodes. Table~\ref{tab:multi} reports the mean and standard deviation of the steps-to-goal for each drift, as well as the overall steps.  
 
 \begin{table*}
     \centering
-    \caption{Performance of an agent over 1,000 runs: average number of steps $\pm$ standard deviation to reach the goal after each drift, and total steps for for each of the 1,500 episodes (less steps is better).}
+    \caption{Performance of each agent over 1,000 runs: average number of steps $\pm$ relative standard deviation (as a percentage of the mean) to reach the goal after each drift, and total steps for all 1,500 episodes (fewer steps indicate better performance).}
     \input{tables/experiments}
     \label{tab:multi}
 \end{table*}
@@ -147,7 +147,7 @@ minutes for \adaptiverl, while it takes around 8 minutes to complete all runs wi
 \begin{figure*}
     \centering
     \includegraphics[width=\textwidth]{figures/q_map_comp.png}
-    \caption{Comparison of Q-value heatmaps after 1,500 episodes: (left) \adaptiverl preserves high Q-values across alternating goal configurations; (right) traditional Q-learning must overwrite past knowledge to learn each new goal.}
+    \caption{Comparison of Q-value heatmaps after 1,500 episodes in a Non-Stationary Reward Enviroment: (left) \adaptiverl preserves high Q-values across alternating goal configurations; (right) Standard Q-learning must overwrite past knowledge to learn each new goal.}
     \label{fig:q-value-comp}
 \end{figure*}
 

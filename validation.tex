@@ -8,11 +8,7 @@
 This section evaluates \adaptiverl in a realistic traffic-signal control scenario under non-stationary congestion. Intelligent traffic management is a canonical application of self-adaptive systems~\cite{HENRICHS2022106940}, and recent meta-\ac{RL} work has shown benefits when reward functions change with traffic saturation~\cite{meta-rl-traffic}. Here, we model two crossing lanes (C1 vertical, C2 horizontal) with Poisson arrivals and dynamically switch congestion levels (changing $\lambda$ parameter) to induce concept drift.  
 
 \subsection{Traffic Environment}
-We implement a custom \texttt{TrafficEnv} (exending OpenAI's Gym library~\cite{towers2024gymnasiumstandardinterfacereinforcement}) whose state is $(c_1,c_2)$, the number of queued vehicles on lanes C1 and C2 (each in $[0,\mathit{max\_state}]$). At each time step the agent selects one of three signal phases:
-\[
-\actions={\,(5,2),\;(2,5),\;(3,3)\}
-\]
-indicating service capacities (percentage of the lane cleared per step) for C1 and C2, respectivily. During each step, service is applied to C1, new vehicles arrive to C2 (Poisson with rate $\lambda_{2}$), then service is applied to C2, followed by arrivals to C1 (Poisson with rate $\lambda_{1}$). Any unused service capacity incurs a penalty:
+We implement a custom \texttt{TrafficEnv} (exending OpenAI's Gym library~\cite{towers2024gymnasiumstandardinterfacereinforcement}) whose state is $(c_1,c_2)$, the number of queued vehicles on lanes C1 and C2 (each in $[0,\mathit{max\_state}]$). At each time step the agent selects one of three signal phases (actions): $\{\,(5,2),\;(2,5),\;(3,3)\}$, indicating service capacities (percentage of the lane cleared per step) for C1 and C2, respectivily. During each step, service is applied to C1, new vehicles arrive to C2 (Poisson with rate $\lambda_{2}$), then service is applied to C2, followed by arrivals to C1 (Poisson with rate $\lambda_{1}$). Any unused service capacity incurs a penalty:
 \[
 \mathrm{penalty} \;=\; 3\times(\text{waste}_{C1} + \text{waste}_{C2})\,,
 \]
@@ -38,10 +34,7 @@ We compare:
 \begin{itemize}
   \item A \emph{standard Q-learning} agent with fixed $\alpha=0.1$, and $\varepsilon$ decayed exponentially to $0.01$.
   \item An \emph{\adaptiverl} agent that uses the PH-test to detect drifts in episode-rewards, resets $\varepsilon\!=\!1$ upon detection, and adaptively adjusts $\alpha$ based on the TD-error (cf.\ Section~\ref{sec:implementation}).  When a drift is detected, it also \emph{appends} two new phases:
-  \[
-    (7,3)\quad\text{and}\quad(3,7),
-  \]
-  allowing finer control under high congestion. Old actions are never removed.
+    $(7,3)$ and $(3,7)$, allowing finer control under high congestion. Old actions are never removed.
 \end{itemize}
 
 \subsection{Results}
@@ -50,7 +43,7 @@ Figure~\ref{fig:traffic-learning-curve} plots the cumulative mean reward (over t
 \begin{figure*}
     \centering
     \includegraphics[width=\textwidth]{figures/traffic_learning_curve.png}
-    \caption{Learning curves for traffic-signal control under non-stationary congestion. Rapidly recovers after the first drift thanks to extension of action set after PH-Test detection, while traditional Q-learning suffers prolonged performance drops.}
+    \caption{Learning curves for traffic-signal control under non-stationary congestion. \adaptiverl rapidly recovers after the first drift thanks to extension of action set after PH-Test detection, while traditional Q-learning suffers prolonged performance drops.}
     \label{fig:traffic-learning-curve}
 \end{figure*}
 

@@ -5,7 +5,19 @@
 \section{Conclusion and Future Work}
 \label{sec:conclusion}
 
+\section{Conclusion and Future Work}
 
+We have demonstrated that \adaptiverl, a self-adaptive Q-learning agent, can effectively detect and respond to non-stationary environments. By leveraging concept drift detection and dynamically adjusting its learning rate and exploration parameters, \adaptiverl consistently outperforms standard Q-learning agents in scenarios where the reward function changes over time. Its adaptive mechanisms are well aligned with the principles of self-adaptive systems, enabling the agent to autonomously adjust its behavior in response to evolving environmental conditions.
+
+\adaptiverl's adaptability is aligned with the definition proposed by~\citet{abel2023definitioncontinualreinforcementlearning}, treating learning as a continuous process rather than a one-time optimization. Notably, it addresses one of the major challenges in continual reinforcement learning (CRL): the problem of catastrophic forgetting.\adaptiverl retains prior policy knowledge while adapting to new configurations, enabling knowledge reuse and accelerating convergence—even when faced with overlapping contradictory subtasks, as highlighted by~\citet{Bagus2022}.
+
+We further validated \adaptiverl in a realistic traffic signal control scenario, where the agent successfully adapted to changing traffic patterns and performance requirements. The use of a dynamic reward function, including penalties for over-serving, proved effective in promoting resource-efficient policies. Additionally, by appending new signal phases (i.e., new actions) upon drift detection, \adaptiverl demonstrated its ability to acquire new capabilities without discarding existing ones. This is particularly relevant in real-world traffic systems, where signal configurations can be updated in near real time; equipping them with adaptive intelligence allows for continuous optimization without the need for manual retuning.
+
+\adaptiverl stands as a promising approach for self-adaptive systems requiring lightweight, real-time learning solutions in environments with limited computational resources.
+
+In future work, we plan to integrate \adaptiverl with complementary mechanisms, such as active learning, and deploy it in edge devices for real-world applications (e.g., \ac{IOT}). Additionally, we aim to generalize its core principles from tabular methods to deep learning architectures. This includes incorporating memory-based plasticity to support knowledge reuse across tasks and enabling online test-time adaptation, allowing agents to respond to new situations without requiring full retraining.
+
+Finally, ...\authorcomment[idea]{RD}{Complete?}
 
 \endinput
 
