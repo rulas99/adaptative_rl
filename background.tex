@@ -19,8 +19,7 @@ In stationary settings, $P$ and $R$ remain fixed over time, and the agent’s ob
 \]
 where $P_t$ and/or $R_t$ change at unknown time steps (``concept drifts''). In this work, we further consider the novel scenario where the agent's action space $\mathcal{A}$ may also change over time. Detecting and adapting to these drifts is central to \ac{CRL}~\cite{khetarpal2022continualreinforcementlearningreview,abel2023definitioncontinualreinforcementlearning}, which treats learning as an ongoing process across a continually changing sequence of tasks.
 
-Q learning~\cite{watkins92} is a model-free implementation of the widely used model
-is \ac{RL}. The long-term quality of an action performed at a given state is computed iteratively in a series of steps and is represented by a Q value,
+Q-learning~\cite{watkins92} is a widely used model-free approach in \ac{RL}. The long-term quality of an action performed at a given state is computed iteratively in a series of steps and is represented by a Q value,
 $\mathit{Q(s,a)}$.
 Formally, each execution step $t$ captures information from the environment and maps it to a state
 {\color{purple}$s_t$} $\in \mathcal{S}$ in its state space. It then selects an
