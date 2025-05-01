@@ -5,9 +5,19 @@
 \section{Background}
 \label{sec:background}
 
-In \ac{RL}, intelligent agents learn to map environmental situations (environment states) to actions to maximize a numerical reward signal they receive from the environment, in the long term~\cite{sutton18}. \ac{RL} agents are defined by
-$\mathcal{S}$: the state space, consisting of all relevant states of the environment,
-$\mathcal{A}$: the action space, i.e. the set of all actions an agent can perform that affect the environment, and the reward $r$: the numerical signal encoding the positive or negative impact of the action at each execution step.
+In \ac{RL}, intelligent agents learn to map environmental situations (environment states) to actions that maximize a numerical reward signal received from the environment over the long term~\cite{sutton18}. \ac{RL} problems are commonly formulated as Markov Decision Processes (MDPs), defined by the tuple $\mathcal{M} = \langle \mathcal{S}, \mathcal{A}, P, R \rangle$, where:
+$\mathcal{S}$ is the state space, comprising all relevant states of the environment;
+$\mathcal{A}$ is the action space, i.e., the set of all actions the agent can perform to affect the environment;
+$P(s_{t+1} \mid s_t, a_t)$ is the transition probability from state {\color{purple}$s_t$} to {\color{purple}$s_{t+1}$} under action {\color{purple}$a_t$}; and
+$R(s_t, a_t)$ is the reward function, providing the numerical signal ($r$) that encodes the positive or negative impact of taking action {\color{purple}$a_t$} in state {\color{purple}$s_t$} at each execution step.
+
+In stationary settings, $P$ and $R$ remain fixed over time, and the agent’s objective is to learn a policy $\pi: \mathcal{S} \to \mathcal{A}$ that maximizes the expected discounted return. However, real-world environments often violate this stationarity assumption: transition dynamics and/or reward functions may shift due to evolving conditions. We model such scenarios as \emph{non-stationary} MDPs, represented by a sequence
+\[
+\{\mathcal{M}_t\}_{t=1}^\infty
+\quad\text{with}\quad
+\mathcal{M}_t = \bigl\langle \mathcal{S}, \mathcal{A}_t, P_t, R_t\bigr\rangle,
+\]
+where $P_t$ and/or $R_t$ change at unknown time steps (``concept drifts''). In this work, we further consider the novel scenario where the agent's action space $\mathcal{A}$ may also change over time. Detecting and adapting to these drifts is central to \ac{CRL}~\cite{khetarpal2022continualreinforcementlearningreview,abel2023definitioncontinualreinforcementlearning}, which treats learning as an ongoing process across a continually changing sequence of tasks.
 
 Q learning~\cite{watkins92} is a model-free implementation of the widely used model
 is \ac{RL}. The long-term quality of an action performed at a given state is computed iteratively in a series of steps and is represented by a Q value,
@@ -29,6 +39,7 @@ the Bellman learning equation as follows:
 \vspace{1em}
 \input{equations/bellman}
 
+While Q-learning converges under stationary conditions (with appropriate decay of \lrate{\alpha}), it can struggle when $P_t$ or $R_t$ change over time. Our work builds on this foundation by incorporating online concept-drift detection and adaptive updates, enabling the agent to remain effective in non-stationary MDPs. We focus particularly on shifts in $R_t$, which may also induce changes in $\mathcal{A}_t$.
 
 
 \endinput
