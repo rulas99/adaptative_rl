@@ -4,9 +4,6 @@
 %%
 \section{Conclusion and Future Work}
 \label{sec:conclusion}
-
-\section{Conclusion and Future Work}
-
 We have demonstrated that \adaptiverl, a self-adaptive Q-learning agent, can effectively detect and respond to non-stationary environments. By leveraging concept drift detection and dynamically adjusting its learning rate and exploration parameters, \adaptiverl consistently outperforms standard Q-learning agents in scenarios where the reward function changes over time. Its adaptive mechanisms are well aligned with the principles of self-adaptive systems, enabling the agent to autonomously adjust its behavior in response to evolving environmental conditions.
 
 \adaptiverl's adaptability is aligned with the definition proposed by~\citet{abel2023definitioncontinualreinforcementlearning}, treating learning as a continuous process rather than a one-time optimization. Notably, it addresses one of the major challenges in continual reinforcement learning (CRL): the problem of catastrophic forgetting.\adaptiverl retains prior policy knowledge while adapting to new configurations, enabling knowledge reuse and accelerating convergence—even when faced with overlapping contradictory subtasks, as highlighted by~\citet{Bagus2022}.
