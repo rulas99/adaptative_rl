@@ -19,7 +19,7 @@ receives a reward {\color{Bittersweet}$r_t$} from the environment when it moves 
 $s_{t+1} \in \mathcal{S}$. The reward is used to update the optimality of performing the
 action {\color{Mulberry}$a_t$} at state {\color{purple}$s_t$}. The agent's goal is to learn
 a policy (\i.e. the best-fit action for each state) that maximizes the reward of the
-long-run behavior. The learning rate {\color{NavyBlue} $\alpha$} determines how much new experiences 
+long-run behavior. The learning rate \lrate{\alpha} determines how much new experiences 
 overwrite previously learned experiences, and the discount factor {\color{RoyalBlue} $\gamma$} 
 determines how much future rewards are discounted so that agents prioritize immediate actions and 
 can plan the best long-term actions. At each time step $t$, the Q value of an action 
