@@ -2,30 +2,58 @@
 % !TEX root = main.tex
 
 %%
-\section{Adaptive \ac{RL} Agents with Changing Behavior}
+\section{\ac{RL} Agents with Adaptive Behavior}
 \label{sec:implementation}
 
-This section introduces \adaptiverl, our proposed approach for enabling \ac{RL} agents to dynamically adapt their behavior in response to evolving environmental conditions. Our method allows agents to pursue varying objectives throughout their operational lifespan and acquire new capabilities as tasks change over time. The implementation is publicly available\footnote{Available at: \url{https://github.com/rulas99/rl_uniandes}}.
+This section introduces \adaptiverl, our proposed approach for enabling \ac{RL} agents to dynamically 
+adapt their behavior in response to evolving environmental conditions; specifically changes to 
+environment goals and changes to agents' actions. Our method allows agents to pursue changing 
+objectives throughout their operational lifespan and acquire new capabilities as tasks change over 
+time. \adaptiverl is made of three main parts:
+\begin{enumerate*}[label=(\arabic*)]
+\item monitoring the environment for changes,
+\item adapting to new goals, and
+\item acquiring new behavior.
+\end{enumerate*}
+The implementation of our work is publicly available\footnote{Available at: \url{https://github.com/rulas99/rl_uniandes}}  
 
-The conceptual foundation of \adaptiverl aligns with the ideas proposed by~\citet{abel2023definitioncontinualreinforcementlearning}, emphasizing continual adaptation rather than convergence to a fixed solution. We extend tabular Q-learning by integrating adaptive mechanisms that enable agents to dynamically adjust their learning strategies in response to detected environmental changes. Similar to the approach described by~\citet{norman2024firstexploreexploitmetalearningsolve}, our agent thoroughly explores the environment each time a change is detected, subsequently exploiting the acquired knowledge. This strategy facilitates rapid convergence to new environment configurations without entirely discarding previously learned knowledge.
+The conceptual foundation of \adaptiverl aligns with the ideas proposed 
+by~\citet{abel2023definitioncontinualreinforcementlearning} for \ac{CRL}, emphasizing continual 
+adaptation rather than convergence to a fixed solution. We extend tabular Q-learning by integrating 
+adaptive mechanisms that enable agents to dynamically adjust their learning strategies in response 
+to detected environmental changes. Similar to the approach described 
+by~\citet{norman2024firstexploreexploitmetalearningsolve}, every time a change is detected, be that 
+a significant change in the rewards or the introduction of new actions, our agent thoroughly explores 
+the environment while retaining information of previously learned policies. The exploration process 
+continues until a new policy stabilizes, to then exploit the acquired knowledge. Applying such strategy 
+agents can rapidly convergence to new environment configurations, without entirely discarding 
+previously learned knowledge.
 
-To enable dynamic behavioral adaptation, we introduce adaptive mechanisms that adjust the agent’s learning rate and exploration rate in conjunction with a concept drift detection strategy. By continuously monitoring and responding to changes in the environment, our agent can autonomously modify its learning process at runtime to maintain effective goal pursuit. This capability positions our approach within the class of self-adaptive systems (SAS), as defined by~\citet{sasreview}, ensuring continual adaptation and resilience in non-stationary contexts.
+To enable agents to adapt their behavior to new conditions, we introduce an adaptive mechanisms 
+that adjust the agent’s learning rate (\lrate{\alpha}) and exploration rate ($\varepsilon$) in conjunction 
+with a concept drift detection strategy. By continuously monitoring and responding to changes in the 
+environment, agents can autonomously modify their learning process at run time, enabling them them 
+to learn new behavior to attain their goals, even if these change. This capability positions our approach 
+within the class of self-adaptive systems (SAS)~\cite{sasreview}, ensuring continual adaptation and 
+resilience in non-stationary contexts.
 
-We dynamically adjust the learning rate based on the Temporal Difference (TD) error, as defined in~\eqref{eq:td_error}.
+The key to our approach is given by dynamically adjusting the learning rate (\lrate{\alpha}) based on 
+the Temporal Difference (TD) error defined in \fref{eq:td_error}.
 
-\begin{equation}
-    \label{eq:td_error}
+\begin{equation} \label{eq:td_error}
     TD_{error} = r_{t+1} + \gamma \cdot \underset{a}{\max} Q(s_{t+1}, a) - Q(s_t, a_t)
 \end{equation}
 
-This error quantifies the difference between the agent’s predicted reward and the actual reward received. The dynamic learning rate ($\alpha^*$) is then adjusted based on the TD error, as defined in~\eqref{eq:dynamic_learning_rate}.
+The TD error quantifies the difference between the agent’s predicted reward and the actual reward 
+received. The dynamic learning rate (\lrate{\alpha^*}) is then adjusted based on the TD error following  
+\fref{eq:dynamic_learning_rate}.
 
 \begin{equation}
     \label{eq:dynamic_learning_rate}
     \alpha^* = \alpha + (\alpha_{\max}-\alpha) \cdot \frac{1}{1 + e^{-(|TD_{error}|-k)}}
 \end{equation}
 
-In this formulation, $\alpha$ denotes the base learning rate (e.g., 0.1), while $\alpha_{\max}$ specifies its upper bound (e.g., 0.99). The parameter $k$ controls the sensitivity of the learning rate to the TD error, with higher values resulting in reduced sensitivity; thus, $k$ must be carefully tuned according to the specific characteristics of the environment and learning context. High TD errors induce a larger learning rate, enabling faster updates during exploration, whereas lower TD errors yield a more stable and conservative learning process during exploitation phases. In Figure~\ref{fig:alpha}, we illustrate the behavior of the dynamic learning rate ($\alpha^*$) in our Non-Stationary GridWorld experiments~\ref{sec:experiments}.
+In the equation, \lrate{\alpha} corresponds to the base learning rate (e.g., 0.1), and $\alpha_{\max}$ is its upper bound (\eg 0.99). The parameter $k$ controls the sensitivity of the learning rate to the TD error, with higher values resulting in reduced sensitivity; thus, $k$ must be carefully tuned according to the specific characteristics of the environment and learning context. High TD errors induce a larger learning rate, enabling faster updates during exploration, whereas lower TD errors yield a more stable and conservative learning process during exploitation phases. \fref{fig:alpha} illustrates the behavior of the dynamic learning rate (\lrate{\alpha^*}) in \fref{sec:experiments} presenting the non-stationary GridWorld experiments. 
 
 \begin{figure*}
     \centering
@@ -34,26 +62,48 @@ In this formulation, $\alpha$ denotes the base learning rate (e.g., 0.1), while 
     \label{fig:alpha}
 \end{figure*}
 
-Following the methodologies of~\citet{mignon2017adaptive} and~\citet{networkdynamicrl}, we implement the PH-test to detect significant shifts in the reward distribution at the end of each episode. The PH-test calculates a cumulative difference between observed rewards and the running mean reward, incorporating a sensitivity parameter ($\delta$). A concept drift (environmental change) is flagged when this cumulative difference surpasses a predefined threshold. Selecting an appropriate threshold value is crucial, as it determines the sensitivity of drift detection. Higher thresholds result in more conservative detection, while lower thresholds increase sensitivity to changes, this value must be selected based on the magnitude order of rewards and posible changes over them.
+%%%%
+\subsection{Environment monitoring and drift detection}
 
-Building on the concept drift detection mechanism and inspired by~\citet{mignon2017adaptive}, we adaptively increase the exploration rate ($\varepsilon$) whenever the PH-test detects a concept drift. This approach promotes exploration immediately following environmental changes, enabling the agent to acquire new knowledge by temporarily adopting an exploration-focused policy. To ensure adequate exploration, the agent maintains this elevated exploration rate for a period (until rewards stabilize, i.e., no further drifts are detected) before $\varepsilon$ resumes its usual decay toward a minimal value, thereby returning to the exploitation phase.
+The first step for agents to adapt their behavior to an evolving environment is to continuously monitor 
+the environment. \ac{RL} environment monitoring is intrinsic through the interaction with the 
+environment, as agents continuously observed rewards after each action execution. To detect 
+changes in the environment, \ie drift, we implement the 
+PH-test~\cite{mignon2017adaptive,networkdynamicrl}. The PH-test calculates the cumulative 
+difference between observed rewards and the running mean reward, incorporating a sensitivity 
+parameter ($\delta$). A concept drift (environmental change) is flagged when the cumulative 
+difference surpasses a predefined threshold. Selecting an appropriate threshold value is crucial, as it 
+determines the sensitivity of drift detection. Higher thresholds result in more conservative detection, 
+while lower thresholds increase sensitivity to changes, this value must be selected based on the 
+magnitude order of rewards and posible changes over them.
 
-This adaptive exploration mechanism ensures the agent maintains an effective balance between exploring new environment dynamics and leveraging previously acquired knowledge. It is crucial to sustain high exploration levels after consistent concept drift detection, so the agent can learn new policies without forgetting previously learned ones. In Figure~\ref{fig:dynamic-eps}, we illustrate the behavior of the dynamic exploration rate ($\varepsilon^*$) in our Non-Stationary GridWorld experiments~\ref{sec:experiments}.
+Building on the concept of drift detection, and following the ideas of~\citet{mignon2017adaptive}, we 
+adaptively increase the exploration rate ($\varepsilon$) whenever the PH-test detects a concept drift. 
+This approach promotes exploration immediately following environmental changes, enabling the agent 
+to acquire new knowledge by temporarily adopting an exploration-focused policy. To ensure adequate 
+exploration, the agent maintains an elevated exploration rate until rewards stabilize (\ie the cumulative 
+difference is below the threshold, and  no further drifts are detected). Once stable, the exploration rate 
+$\varepsilon$ uses a decay policy, leading the agent to exploit its behavior.
+
+This adaptive drift detection mechanism ensures the agent maintains an effective balance between 
+exploring new environment dynamics and leveraging previously acquired knowledge. It is crucial to 
+ensure a high exploration rate after concept drift is detected consistently, so the agent can learn a 
+new policy (\ie behavior) without forgetting previously acquired knowledge. \fref{fig:dynamic-eps}, 
+shows the behavior of the dynamic exploration rate ($\varepsilon^*$) in our non-stationary GridWorld 
+running example.
 
 \begin{figure*}
     \centering
-    \includegraphics[width=\textwidth]{figures/epsilon.png}
+    \includegraphics[width=\textwidth]{figures/eps}
     \caption{Behavior of the dynamic exploration rate ($\varepsilon^*$) in Non-Stationary GridWorld experiments. Notice how $\varepsilon^*$ increases each time a concept drift is detected by the PH-test and remains high until the agent consistently achieves the expected rewards (i.e., no further concept drift and stable rewards). Afterward, $\varepsilon^*$ begins to decay toward its minimum value allowing to explode the acquired knowledge.}
     \label{fig:dynamic-eps}
 \end{figure*}
 
-These adaptive mechanisms equip the agent to effectively manage learning under varying and unpredictable conditions, enabling continuous adaptation and efficient knowledge transfer between different environmental states. This approach allows the agent to rapidly respond to new information without discarding previously learned knowledge, achieving greater resilience and performance stability over its lifespan. In continous, we present a GridWorld example to illustrate \adaptiverl's behavior in am environment with non-stationary reward function and compare it with a standard Q-learning agent.
-
 %%%%
-\subsection{Agent Adaptation to Different Goals}
+\subsection{Agent Adaptation to Changing Goals}
 \label{sec:experiments}
 
-To evaluate \adaptiverl’s ability to adapt to environmental changes induced by a non-stationary reward function, and to compare its performance against traditional Q-learning, we construct a $9\times 9$ GridWorld. In this domain, every cell yields a reward of $-1$, except for a single goal state that provides $+100$. The agent begins each episode at the grid’s center and may move up, down, left, or right. Initially, the goal is placed in the top-left corner. After every 300 episodes—by which time the agent should have learned the optimal policy—we trigger a concept drift by relocating the goal to the diagonally opposite corner (bottom-right). We repeat this alternation for a total of 1,500 episodes, expecting the agent to detect each drift and re-converge to the new optimal policy. Figure~\ref{fig:r-change} illustrates this GridWorld setup and the reward relocations.
+To evaluate \adaptiverl’s ability to adapt to environmental changes induced by a non-stationary reward function, and to compare its performance against traditional Q-learning, we construct a $9\times 9$ GridWorld. In this domain, every cell yields a reward of $-1$, except for a single goal state that provides $+100$. The agent begins each episode at the grid’s center and may move up, down, left, or right. Initially, the goal is placed in the top-left corner. After every 300 episodes—by which time the agent should have learned the optimal policy—we trigger a concept drift by relocating the goal to the diagonally opposite corner (bottom-right). We repeat this alternation for a total of 1,500 episodes, expecting the agent to detect each drift and re-converge to the new optimal policy. \fref{fig:r-change} illustrates this GridWorld setup and the reward relocations.
 
 \begin{figure*}
     \centering
@@ -69,12 +119,12 @@ We compare two agents over 1,000 independent runs:
 \end{itemize}
 We measure (1) the number of episodes required to re-converge after each reward change, and (2) the total number of steps across all 1,500 episodes. Table~\ref{tab:multi} reports the mean and standard deviation of the steps-to-goal for each drift, as well as the overall steps.  
 
-\begin{table}
+\begin{table*}
     \centering
-    \caption{Performance summary over 1,000 runs: average $\pm$ standard deviation of steps to reach the goal after each drift, and total steps for all 1,500 episodes.}
+    \caption{Performance of an agent over 1,000 runs: average number of steps $\pm$ standard deviation to reach the goal after each drift, and total steps for for each of the 1,500 episodes (less steps is better).}
     \input{tables/experiments}
     \label{tab:multi}
-\end{table}
+\end{table*}
 
 \adaptiverl outperforms the standard Q-learning agent on every metric. Figures~\ref{fig:alpha} and~\ref{fig:dynamic-eps} show how \adaptiverl’s adaptive mechanisms enable rapid re-learning of the new goal location without erasing knowledge of previous configurations. This behavior addresses the challenge of overlapping or even contradictory subtasks, as discussed in~\cite{Bagus2022}, where identical state–action pairs may yield different rewards.
 
@@ -90,7 +140,9 @@ By contrast, the standard Q-learning agent converges reliably only to the first 
 
 These results demonstrate that \adaptiverl consistently outperforms standard Q-learning in adapting to changing goals and acquiring new policies without forgetting previously learned knowledge. As shown in Figure~\ref{fig:q-value-comp}, after 1,500 episodes, \adaptiverl maintains high Q-values for all previous goal configurations, whereas traditional Q-learning must overwrite its Q-values each time the goal relocates. Notably, \adaptiverl preserves prior knowledge by promoting exploration for a sufficient period after each detected drift and by scaling updates according to the TD-error magnitude. This approach not only prevents catastrophic forgetting but also enables the agent to handle both contradictory and non-contradictory overlapping subtasks—such as when goals are randomly sampled in nearby regions rather than at the exact same cell\footnote{Animated simulations of these and other scenarios are available at: \url{https://github.com/rulas99/rl_uniandes/tree/main/simulations}}.
 
-While \adaptiverl introduces modest overhead due to drift detection and adaptive updates, its overall runtime is actually lower: on an Intel Core i5 with 64 GB RAM, 1,000 runs require approximately 5 minutes for \adaptiverl, compared to 8 minutes for standard Q-learning. This efficiency gain results directly from the reduced number of steps needed to reach the goal after each drift. Specifically, \adaptiverl converges in significantly fewer steps than the standard agent—requiring about 1.9× fewer iterations after the first drift and 1.7× fewer over the full 1,500 episodes—highlighting the practical advantages of our adaptive mechanisms in dynamic environments.
+While \adaptiverl introduces modest overhead due to drift detection and adaptive updates, its overall 
+run-time is actually lower: on an Intel Core i5 with 64GB RAM $1,000$ runs take approximately
+minutes for \adaptiverl, while it takes around 8 minutes to complete all runs with the baseline Q-learning implementation. This efficiency gain results directly from the reduced number of steps needed to reach the goal after each drift. Specifically, \adaptiverl converges in significantly fewer steps than the standard agent --requiring about 1.9x fewer iterations after the first drift and 1.7x fewer over the full 1,500 episodes --highlighting the practical advantages of our adaptive mechanisms in dynamic environments.
 
 \begin{figure*}
     \centering
@@ -102,6 +154,8 @@ While \adaptiverl introduces modest overhead due to drift detection and adaptive
 %%%%
 \subsection{Agent acquisition of new capabilities}
 In the next section~\ref{sec:validation}, we present a real-world use case for traffic light control, where the agent is provided with a new set of actions following concept drift detection. This enables the agent to efficiently learn how to utilize the new actions and optimize traffic flow by adapting its policy to varying congestion levels. The agent can acquire new capabilities without forgetting previously learned behaviors, maintaining adaptability to changing environmental conditions.
+
+These adaptive mechanisms equip the agent to effectively manage learning under varying and unpredictable conditions, enabling continuous adaptation and efficient knowledge transfer between different environmental states. The concept drift detection method with the dynamic exploration rate allows the agent to rapidly respond to new information without discarding previously learned knowledge, achieving a greater resilience and performance stability over its lifespan. 
 
 \endinput
 
