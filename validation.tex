@@ -7,8 +7,17 @@
 
 %%%%
 \subsection{Evaluation scenarios}
-To evaluate the effectiveness of \adaptiverl in adapting to changing goals and new acquired actions we tuse two different scenarios. First, we use the Gridworld benchmark as a proof of concept evaluation and running example of \adaptiverl, as presented in \fref{sec:motivation}. Second we use a traffic-signal control scenario to validate adaptation under real-world scenarios.
+To evaluate the effectiveness of \adaptiverl in adapting to changing goals and new acquired actions we tuse two different scenarios. First, we use the Gridworld benchmark as a proof of concept evaluation and running example of \adaptiverl. Second we use a traffic-signal control scenario to validate adaptation under real-world scenarios.
 
+%%%%%%
+\subsubsection{Gridworld}
+After every 300 episodes --by 
+which time the agent should have learned the optimal policy---we trigger a concept drift by relocating 
+the goal to the diagonally opposite corner (bottom-right). We repeat this alternation for a total of $1,500$ 
+episodes, expecting the agent to detect each drift and re-converge to the new optimal policy
+
+%%%%%%
+\subsubsection{Traffic-signal control}
 Intelligent traffic management is a canonical application of self-adaptive systems~\cite{HENRICHS2022106940}, and recent meta-\ac{RL} work has shown benefits when reward functions change with traffic saturation~\cite{meta-rl-traffic}. Here, we model two crossing lanes (C1 vertical, C2 horizontal) with Poisson arrivals and dynamically switch congestion levels (changing $\lambda$ parameter) to induce concept drift. 
 
 We implement a custom \texttt{TrafficEnv} (extending OpenAI's Gym library~\cite{towers2024gymnasiumstandardinterfacereinforcement}) whose state is $(c_1,c_2)$, the number of queued vehicles on lanes C1 and C2 (each in $[0,\mathit{max\_state}]$). At each time step the agent selects one of three signal phases (actions): $\{\,(5,2),\;(2,5),\;(3,3)\}$, indicating service capacities (percentage of the lane cleared per step) for C1 and C2, respectively. During each step, service is applied to C1, new vehicles arrive to C2 (Poisson with rate $\lambda_{2}$), then service is applied to C2, followed by arrivals to C1 (Poisson with rate $\lambda_{1}$). Any unused service capacity incurs a penalty:
