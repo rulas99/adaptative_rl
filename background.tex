@@ -54,14 +54,12 @@ we use the Gridworld benchmark as a running example.
 Gridworld consists of a rectangular matrix ($9\times 9$ in our case). In Gridworld, every cell is 
 associated with a reward of $-1$, except for a single goal state that has a reward of $+100$ as shown 
 in the left part of \fref{fig:r-change}. The agent begins each episode at the grid's center and may move 
-up, down, left, or right. Initially, the goal is placed in the top-left corner. After every 300 episodes --by 
-which time the agent should have learned the optimal policy---we trigger a concept drift by relocating 
-the goal to the diagonally opposite corner (bottom-right). We repeat this alternation for a total of $1,500$ 
-episodes, expecting the agent to detect each drift and re-converge to the new optimal policy
+in any direction \spy{up}, \spy{down}, \spy{left}, or \spy{right}. Initially, the goal is placed in the top-left 
+corner, but may move to any other state, as shown in the right-hand side of \fref{fig:r-change}.
 
 \begin{figure*}[hptb]
     \centering
-    \includegraphics[width=\textwidth]{figures/rewards_change}
+    \includegraphics[width=0.9\textwidth]{figures/rewards_change}
     \caption{Non-Stationary Gridworld: Concept drift is induced by relocating the reward. The agent starts at the center and must reach the goal, which alternates between the top-left and bottom-right corners every 300 episodes.}
     \label{fig:r-change}
 \end{figure*}
