@@ -5,6 +5,9 @@
 \section{Background}
 \label{sec:background}
 
+%%%%
+\subsection{\acl{RL}}
+
 In \ac{RL}, intelligent agents learn to map environmental situations (environment states) to actions that maximize a numerical reward signal received from the environment over the long term~\cite{sutton18}. \ac{RL} problems are commonly formulated as Markov Decision Processes (MDPs), defined by the tuple $\mathcal{M} = \langle \mathcal{S}, \mathcal{A}, P, R, \gamma \rangle$, where:
 $\mathcal{S}$ is the state space, comprising all relevant states of the environment;
 $\mathcal{A}$ is the action space, i.e., the set of all actions the agent can perform to affect the environment;
@@ -40,6 +43,28 @@ the Bellman learning equation as follows:
 
 While Q-learning converges under stationary conditions (with appropriate decay of \lrate{\alpha}), it can struggle when $P_t$ or $R_t$ change over time. Our work builds on this foundation by incorporating online concept-drift detection and adaptive updates, enabling the agent to remain effective in non-stationary MDPs. We focus particularly on shifts in $R_t$, which may also induce changes in $\mathcal{A}_t$.
 
+
+%%%%
+\subsection{Motivating example}
+\label{sec:motivation}
+
+
+To motivate the adaptation of agent's behavior to changing goals and the acquisition of new actions, 
+we use the Gridworld benchmark as a running example.
+Gridworld consists of a rectangular matrix ($9\times 9$ in our case). In Gridworld, every cell is 
+associated with a reward of $-1$, except for a single goal state that has a reward of $+100$ as shown 
+in the left part of \fref{fig:r-change}. The agent begins each episode at the grid's center and may move 
+up, down, left, or right. Initially, the goal is placed in the top-left corner. After every 300 episodes --by 
+which time the agent should have learned the optimal policy---we trigger a concept drift by relocating 
+the goal to the diagonally opposite corner (bottom-right). We repeat this alternation for a total of $1,500$ 
+episodes, expecting the agent to detect each drift and re-converge to the new optimal policy
+
+\begin{figure*}[hptb]
+    \centering
+    \includegraphics[width=\textwidth]{figures/rewards_change}
+    \caption{Non-Stationary Gridworld: Concept drift is induced by relocating the reward. The agent starts at the center and must reach the goal, which alternates between the top-left and bottom-right corners every 300 episodes.}
+    \label{fig:r-change}
+\end{figure*}
 
 \endinput
 
