@@ -67,7 +67,7 @@ new policy (\ie behavior) without forgetting previously acquired knowledge. \fre
 shows the behavior of the dynamic exploration rate ($\varepsilon^*$) in our non-stationary Gridworld 
 running example.
 
-\begin{figure*}
+\begin{figure*}[hptb]
     \centering
     \includegraphics[width=\textwidth]{figures/eps}
     \caption{\adaptiverl's adaptive behavior of the dynamic exploration rate ($\varepsilon^*$) in Non-Stationary Gridworld experiments. Observe how $\varepsilon^*$ increases whenever a concept drift is detected by the PH-test and remains elevated until the agent consistently achieves the expected rewards (i.e., no further drift and stable rewards). Once stability is reached, $\varepsilon^*$ decays toward its minimum value, allowing the agent to exploit the acquired knowledge.}
@@ -110,9 +110,9 @@ shortens. This is due fact that agents do not loose their knowledge after a conc
 As a consequence, agents take more informed decisions after every episode, leading to higher 
 rewards. 
 
-\begin{figure*}[htptb]
+\begin{figure*}[hptb]
     \centering
-    \includegraphics[width=\textwidth]{figures/alpha.png}
+    \includegraphics[width=\textwidth]{figures/alpha}
     \caption{\adaptiverl's adaptive behavior of the dynamic learning rate ($\alpha^*$) in Non-Stationary Gridworld experiments. Notice how $\alpha^*$ increases during exploration phases (when the TD error is high) and decreases during exploitation phases (when the TD error is low), enabling rapid convergence during exploration and stable learning during exploitation.}
     \label{fig:alpha}
 \end{figure*}
