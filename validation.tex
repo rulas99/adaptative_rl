@@ -38,25 +38,27 @@ reward functions change with traffic saturation~\cite{meta-rl-traffic}. Here, we
 lanes (C1 vertical, C2 horizontal) with Poisson arrivals and dynamically switch congestion levels 
 (changing $\lambda$ parameter) to induce concept drift. 
 
-In this scenario, the changes to the environment and agent take place simultaneously. In this scenario, 
-the agent is provided with a new set of actions following a concept drift detected in the reward function. 
+In this scenario, the changes to the environment goals and agent actions take place simultaneously. 
+The agent is given a new set of actions following a concept drift detected in a new reward function. 
 This enables the agent to efficiently learn how to utilize the new actions and optimize traffic flow by 
 adapting its policy to varying congestion levels. The agent acquires new capabilities without forgetting 
-previously learned behaviors, maintaining adaptability to changing environmental conditions.
+previously learned behavior, maintaining adaptability to changing environmental conditions.
 
 We implement a custom \texttt{TrafficEnv} (extending OpenAI's Gym library~\cite{gymlib}). The system 
-state $(c_1,c_2)$ represents the number of queued vehicles on lanes C1 and C2 respectively, each in 
-the interval $[0,\mathit{max\_state}]$. At each time step the agent selects one of three signal phases 
-(actions): $\{\,(5,2),\;(2,5),\;(3,3)\}$, indicating service capacities (percentage of the lane cleared per 
-step) for C1 and C2, respectively. During each step, service is applied to C1, new vehicles arrive to 
-C2 (Poisson with rate $\lambda_{2}$), then service is applied to C2, followed by arrivals to C1 
-(Poisson with rate $\lambda_{1}$). Any unused service capacity incurs a penalty:
+state $(c_1,c_2)$ represents the number of queued vehicles on lanes C1 and C2 respectively, where 
+state values are bounded in the interval $[0,\mathit{max\_state}]$. At each time step the agent selects 
+one of three signal phases (actions): $\{(5,2),\;(2,5),\;(3,3)\}$, indicating service capacities (percentage 
+of the lane cleared per step) for C1 and C2, respectively. During each step, service is applied to C1, 
+new vehicles arrive to C2 (a Poisson distribution with rate $\lambda_{2}$), then service is applied to 
+C2, followed by arrival of new vehicles to C1 (a Poisson distribution with rate $\lambda_{1}$). Any 
+unused service capacity incurs a penalty:
 \[
 \mathrm{penalty} \;=\; 3\times(\text{waste}_{C1} + \text{waste}_{C2})\,,
 \]
-discouraging “over-serving” when queues are small.
+discouraging over-serving lanes when queues are small.
 
-The \emph{dynamic reward} combines congestion cost and service penalty:
+The \emph{dynamic reward} combines congestion cost and service penalty, defined as 
+$r - \mathrm{penalty}$, where:
 \[
 r = 
 \begin{cases}
@@ -64,16 +66,14 @@ r =
 -(c_1 + 2c_2)\quad &\text{if }c_2>7 \;\wedge\;c_2>c_1,\\
 -(c_1 + c_2)\quad &\text{otherwise}
 \end{cases}
-\;-\;\mathrm{penalty}\,
 \]
 The agents  execute for a total of $10,000$ episodes with 30 steps per episode. We induce two 
-goal changes triggering a concept drift by changing arrival rates at episodes $3,000$ and $8,000$.
-\[
-(\lambda_1,\lambda_2):
-\;(4,2)\;\to\;(5,7)\;\to\;(3,1)
-\]
+goal changes triggering a concept drift by changing arrival rate ($\lambda_1$ and $\lambda_2$ for 
+the Poisson distributions) of vehicles: at episode $3,000$ we update the rates 
+($\lambda_1, \lambda_2$) from $(4,2)\;\to\;(5,7)$, and at episode $8,000$ we update the rates from $(5,7)\;\to\;(3,1)$.
 
-Note that when a drift is detected, agents \emph{append} two new phases (\ie actions):
+
+Note that when a drift is detected, agents acquires two new signal phases (\ie actions):
 $(7,3)$ and $(3,7)$, allowing for finer control under high congestion. Old actions are never removed.
 
 %%%
@@ -119,7 +119,7 @@ the lower right part of the grid has been explored successfully. Moreover, with 
 confirms the benefits of not forgetting, as after the second goal change, the visited states continue to 
 have the same information as initially discovered (in proportion to the grid). At the end, the agent is 
 more motivated to go towards the new goal, as that part of the environment has already been 
-explored with acceptable rewards.
+explored with good rewards around the new goal.
  
 \begin{figure*}[hptb]
     \centering
@@ -128,38 +128,74 @@ explored with acceptable rewards.
     \label{fig:q-value-comp}
 \end{figure*}
 
-\fref{fig:q-value-comp2} shows the Q-value heatmaps after 400 episodes (300 episodes until the new action is introduced, and 100 episodes to find the new policy including the acquired action). Upon introduction of the new actions, \adaptiverl increases exploration and effectively learns to adjust its policy, leveraging the extended action set. In contrast, the standard Q-learning agent only manages to apply the jump capability in previously explored states, resulting in a suboptimal policy after the action space changes. This demonstrates how the adaptive mechanisms in \adaptiverl enable effective learning of new actions and adaptation to an expanded action space, while the standard Q-learning agent fails to do so.
+In the second case, when a new action is introduced, the \adaptiverl agent incorporates the new 
+action as part of the optimal policy, reducing the actions taken from 14 to 4, by jumping over walls and 
+other states. \fref{fig:q-value-comp2} shows the Q-value heatmaps after 400 episodes (300 episodes 
+until the new action is introduced, and 100 episodes to find  the new policy including the acquired 
+action). Upon introduction of the new action, \adaptiverl increases exploration and effectively learns 
+to adjust its policy, leveraging the extended action set. In contrast, the baseline Q-learning agent only 
+manages to apply the jump capability in previously unexplored states, as it has a higher chance of 
+being used in such states than in states is a set policy. This results in a suboptimal policy after (taking 
+14 steps to reach the goal) as the action space changes. 
 
 \begin{figure*}[hptb]
     \centering
     \includegraphics[width=0.9\textwidth]{figures/q_map_comp2}
-    \caption{Comparison of Q-value heatmaps after 400 episodes with a mutable action space: (left) \adaptiverl effectively learns to use the extended set of actions, achieving an optimal policy for this configuration; (right) Standard Q-learning remains stuck in a suboptimal policy for the new action space. Double arrows indicate the new actions available to the agent (jumping).}
+    \caption{Comparison of Q-value heatmaps after 400 episodes with a mutable action space: (left) \adaptiverl effectively learns to use the extended set of actions, achieving an optimal policy for this configuration; (right) Standard Q-learning remains in a suboptimal policy for the new action space. Double arrows indicate the new actions available to the agent (jumping).}
     \label{fig:q-value-comp2}
 \end{figure*}
+
+This demonstrates how the adaptive mechanisms in \adaptiverl enable effective learning of new 
+actions and adaptation to an expanded action space, while the standard Q-learning agent fails to do 
+so.
 
 %%%%%%
 \subsubsection{Traffic-signal control}
 
-We now focus on the results of using \adaptiverl in a realistic traffic-signal control scenario under non-stationary congestion.  
+We now focus on the results of using \adaptiverl in the traffic-signal control scenario under 
+non-stationary congestion.  
 
-\fref{fig:traffic-learning-curve} plots the cumulative mean reward (over the last 500 episodes) for both agents. The green vertical line marks the PH-test detection at episode 3004; the second drift at episode 8000 was not flagged, since the new arrival rates produce a reward distribution within the original sensitivity threshold.
+\fref{fig:traffic-learning-curve} shows the cumulative mean reward (over the last 500 episodes) for 
+both the baseline agent and the \adaptiverl agent. In this scenario there are two moments for concept 
+drift, one at episode $3,000$, and one at episode $8,000$. In the figure, the green vertical line marks 
+the detection of the concept drift using the PH-test. We observe the first concept drift is effectively  
+detected by episode $3,004$. However, the second concept drift is not detected. The reason for the 
+failure to detect the concept drift in the second case is that the new arrival rates generated in to disturb 
+the agent behavior have a reward distribution that is a subset of the original rewards, and therefore 
+remain under the sensitivity threshold for the PH-test.
 
 \begin{figure*}[hptb]
     \centering
     \includegraphics[width=0.9\textwidth]{figures/traffic_learning_curve}
-    \caption{Learning performance for traffic-signal control under non-stationary congestion. \adaptiverl rapidly recovers after the first drift thanks to extension of action set after PH-Test detection, while traditional Q-learning suffers prolonged performance drops.}
+    \caption{Learning performance for traffic-signal control under non-stationary congestion. \adaptiverl rapidly recovers after the first drift thanks to extension of action set after PH-Test detection, while traditional Q-learning suffers prolonged underperformance until the initial distribution is restored.}
     \label{fig:traffic-learning-curve}
 \end{figure*}
 
-Initially, both agents improve steadily. After the first drift, \adaptiverl promptly increases exploration, exploits its new actions $(7,3)$ and $(3,7)$, and regains performance within a few hundred episodes. In contrast, the standard agent endures a deep, slow recovery. The built-in penalty for wasted green time ensures \adaptiverl does not “over-serve” when queues shrink, automatically balancing old and new phases without discarding any actions.
+In \fref{fig:traffic-learning-curve} we observe that after the first concept drift, \adaptiverl promptly 
+increases exploration, and incorporates its new actions $(7,3)$ and $(3,7)$ in the agent's policy within 
+a couple hundred episodes. With the new actions, performance starts to build up, effectively 
+managing the new traffic conditions. In contrast, the baseline Q-learning agent demonstrate a deep 
+performance loss, with only a slight performance gain over time. When the second concept drift 
+occurs, restoring the traffic balance, both agents present a rapid performance improvement, as they 
+are able to quickly exploit the initial policy. 
 
-This traffic-signal case confirms that \adaptiverl can:
+Finally, we observe the built-in penalty for wasted green time ensures \adaptiverl does not over-serve 
+one lane as queues shrink, automatically balancing old and new phases without discarding any 
+actions.
+
+This traffic-signal control case study confirms that \adaptiverl can effectively:
 \begin{enumerate}
-  \item Detect and react to non-stationary congestion via the PH-test, boosting exploration exactly when needed and the adaptive mechanisms that distinguish \adaptiverl.
-  \item Seamlessly incorporate new signal phases---analogous to real-world reprogramming of traffic lights---without removing prior options.
-  \item Leverage a dynamic reward (with penalization) to avoid excessive service when traffic is light, resulting in resource-efficient policies.
+  \item Detect and react to non-stationary conditions via the PH-test, boosting exploration as needed 
+  and exploiting previous knowledge whenever possible; making for adaptable agents.
+  \item Seamlessly incorporate new signal phases, analogous to real-world reprogramming of traffic 
+  lights, without removing prior actions.
+  \item Leverage a dynamic reward (with penalization) to avoid excessive servicing when traffic is light, 
+  resulting in resource-efficient policies.
 \end{enumerate}
-In practice, modern traffic controllers can update phase timings in real time; endowing them with self-adaptive intelligence, as in \adaptiverl, allows continuous, automated adjustment to changing traffic patterns without manual retuning.
+
+In practice, modern traffic controllers can update phase timings in real time; endowing them with 
+self-adaptive intelligence, as in \adaptiverl, allows continuous, automated adjustment to changing 
+traffic patterns without manual retuning or agent retraining.
 
 
 \endinput
