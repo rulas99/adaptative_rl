@@ -53,7 +53,6 @@ with active learning and concept drift detection mechanisms (like PH-Test) for n
 effectively identify potential threats~\cite{networkdynamicrl}, or the use of \ac{RL} macro actions to 
 continuously learn adaptation strategies~\cite{cardozo23}.
 
-Our approach compares with the state-of-the-art in that \authorcomment[idea]{RD}{Complete?}
-
+Our approach unifies and extends three key research directions identified in the state of the art: (i) decoupling exploration and exploitation through specialized policies; (ii) online adaptation of learning parameters based on performance feedback; and (iii) proactive environment monitoring and concept drift detection to trigger adaptive responses. Uniquely, \adaptiverl integrates these mechanisms within a \ac{CRL} framework that responds to detected drifts and action-space expansions, resetting exploration and updating learning parameters only when necessary. This coordinated strategy enables continual adaptation without excessive retraining. Furthermore, addressing challenges such as those highlighted by \citet{Bagus2022}, our method mitigates catastrophic forgetting by preserving and reusing prior policy knowledge across evolving configurations, ensuring accelerated convergence even in the presence of overlapping contradictory subtasks.  
 
 \endinput

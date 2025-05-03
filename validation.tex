@@ -20,7 +20,7 @@ episodes, expecting the agent to detect each drift and re-converge to the new op
 \subsubsection{Traffic-signal control}
 Intelligent traffic management is a canonical application of self-adaptive systems~\cite{HENRICHS2022106940}, and recent meta-\ac{RL} work has shown benefits when reward functions change with traffic saturation~\cite{meta-rl-traffic}. Here, we model two crossing lanes (C1 vertical, C2 horizontal) with Poisson arrivals and dynamically switch congestion levels (changing $\lambda$ parameter) to induce concept drift. 
 
-We implement a custom \texttt{TrafficEnv} (extending OpenAI's Gym library~\cite{towers2024gymnasiumstandardinterfacereinforcement}) whose state is $(c_1,c_2)$, the number of queued vehicles on lanes C1 and C2 (each in $[0,\mathit{max\_state}]$). At each time step the agent selects one of three signal phases (actions): $\{\,(5,2),\;(2,5),\;(3,3)\}$, indicating service capacities (percentage of the lane cleared per step) for C1 and C2, respectively. During each step, service is applied to C1, new vehicles arrive to C2 (Poisson with rate $\lambda_{2}$), then service is applied to C2, followed by arrivals to C1 (Poisson with rate $\lambda_{1}$). Any unused service capacity incurs a penalty:
+We implement a custom \texttt{TrafficEnv} (extending OpenAI's Gym library~\cite{gymlib}) whose state is $(c_1,c_2)$, the number of queued vehicles on lanes C1 and C2 (each in $[0,\mathit{max\_state}]$). At each time step the agent selects one of three signal phases (actions): $\{\,(5,2),\;(2,5),\;(3,3)\}$, indicating service capacities (percentage of the lane cleared per step) for C1 and C2, respectively. During each step, service is applied to C1, new vehicles arrive to C2 (Poisson with rate $\lambda_{2}$), then service is applied to C2, followed by arrivals to C1 (Poisson with rate $\lambda_{1}$). Any unused service capacity incurs a penalty:
 \[
 \mathrm{penalty} \;=\; 3\times(\text{waste}_{C1} + \text{waste}_{C2})\,,
 \]
@@ -47,7 +47,7 @@ $(7,3)$ and $(3,7)$, allowing for finer control under high congestion. Old actio
 
 %%%
 \subsection{Experimental setting}
-All experiments are run on an Intel Core i5 with 64GB RAM. The experiments use version 3.12 of Python with the Gym library (0.26.2)~\cite{gymlib}. 
+All experiments are run on an Intel Core i5 with 64GB RAM. The experiments use version 3.12 of Python with the Gym library (0.26.2). 
 
 For the evaluation in both application domains we compare the standard Q-learning algorithm (used as a baseline) and \adaptiverl.
 \begin{itemize}
