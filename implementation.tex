@@ -6,8 +6,8 @@
 \label{sec:implementation}
 
 This section introduces \adaptiverl, our proposed approach for enabling \ac{RL} agents to dynamically 
-adapt their behavior in response to evolving environmental conditions; specifically changes to 
-environment goals and changes to agents' actions. Our method allows agents to pursue changing 
+adapt their behavior in response to evolving environmental conditions, specifically changes in 
+environmental goals and available agent actions. Our method enables agents to pursue shifting 
 objectives throughout their operational lifespan and acquire new capabilities as tasks change over 
 time. \adaptiverl is made of three main parts:
 \begin{enumerate*}[label=(\arabic*)]
@@ -15,7 +15,7 @@ time. \adaptiverl is made of three main parts:
 \item adapting to new goals, and
 \item acquiring new behavior.
 \end{enumerate*}
-The implementation of our work is publicly available\footnote{Available at: \url{https://github.com/rulas99/rl_uniandes}}.
+The implementation of our work is publicly available\footnote{Available at: \url{https://anonymous.4open.science/r/morphin_rl}}.
 
 The conceptual foundation of \adaptiverl aligns with the ideas proposed 
 by~\citet{abel2023definitioncontinualreinforcementlearning} for \ac{CRL}, emphasizing continual 
@@ -130,7 +130,7 @@ By contrast, the standard Q-learning agent converges reliably only to the first 
     \label{fig:static-eps}
 \end{figure*}
 
-These results demonstrate that \adaptiverl consistently outperforms standard Q-learning in adapting to changing goals and acquiring new policies without forgetting previously learned knowledge. As shown in Figure~\ref{fig:q-value-comp}, after 1,500 episodes, \adaptiverl maintains high Q-values for all previous goal configurations, whereas traditional Q-learning must overwrite its Q-values each time the goal relocates. Notably, \adaptiverl preserves prior knowledge by promoting exploration for a sufficient period after each detected drift and by scaling updates according to the TD-error magnitude. This approach not only prevents catastrophic forgetting but also enables the agent to handle both contradictory and non-contradictory overlapping subtasks---such as when goals are randomly sampled in nearby regions rather than at the exact same cell\footnote{Animated simulations of these and other scenarios are available at: \url{https://github.com/rulas99/rl_uniandes/tree/main/simulations}}.
+These results demonstrate that \adaptiverl consistently outperforms standard Q-learning in adapting to changing goals and acquiring new policies without forgetting previously learned knowledge. As shown in Figure~\ref{fig:q-value-comp}, after 1,500 episodes, \adaptiverl maintains high Q-values for all previous goal configurations, whereas traditional Q-learning must overwrite its Q-values each time the goal relocates. Notably, \adaptiverl preserves prior knowledge by promoting exploration for a sufficient period after each detected drift and by scaling updates according to the TD-error magnitude. This approach not only prevents catastrophic forgetting but also enables the agent to handle both contradictory and non-contradictory overlapping subtasks---such as when goals are randomly sampled in nearby regions rather than at the exact same cell\footnote{Animated simulations of these and other scenarios are available at: \url{https://anonymous.4open.science/r/morphin_rl/simulations/memory_stm_v4_exp.mp4}}.
 
 While \adaptiverl introduces modest overhead due to drift detection and adaptive updates, its overall 
 run-time is actually lower. Using our experimental setting $1,000$ runs take approximately 5
@@ -145,10 +145,18 @@ minutes for \adaptiverl, while it takes around 8 minutes to complete all runs wi
 
 %%%%
 \subsection{Acquisition of new actions}
-In the next Section~\ref{sec:validation}, we present a real-world use case for traffic light control, where the agent is provided with a new set of actions following concept drift detection. This enables the agent to efficiently learn how to utilize the new actions and optimize traffic flow by adapting its policy to varying congestion levels. The agent can acquire new capabilities without forgetting previously learned behaviors, maintaining adaptability to changing environmental conditions.
+We now present a Gridworld scenario featuring walls that restrict the agent's movement according to its initial set of actions. As in the previous experiment, after 300 episodes—once the agent has learned to navigate the environment and reach the goal—the action space is expanded to include new actions that grant the agent a jumping capability. This change in the action space triggers drift detection, which, through the adaptive mechanisms of \adaptiverl, prompts the agent to adjust its policy to accommodate the new set of actions. 
 
-These adaptive mechanisms equip the agent to effectively manage learning under varying and unpredictable conditions, enabling continuous adaptation and efficient knowledge transfer between different environmental states. The concept drift detection method with the dynamic exploration rate allows the agent to rapidly respond to new information without discarding previously learned knowledge, achieving a greater resilience and performance stability over its lifespan. 
+Figure~\ref{fig:q-value-comp2} shows the Q-value heatmaps after 400 episodes\footnote{In this scenario, the reward function remains unchanged.}. Upon introduction of the new actions, \adaptiverl increases exploration and effectively learns to adjust its policy, leveraging the extended action set. In contrast, the standard Q-learning agent only manages to apply the jump capability in previously explored states, resulting in a suboptimal policy after the action space changes. This demonstrates how the adaptive mechanisms in \adaptiverl enable effective learning of new actions and adaptation to an expanded action space, while the standard Q-learning agent fails to do so.
 
+\begin{figure*}
+    \centering
+    \includegraphics[width=\textwidth]{figures/q_map_comp2}
+    \caption{Comparison of Q-value heatmaps after 400 episodes with a mutable action space: (left) \adaptiverl effectively learns to use the extended set of actions, achieving an optimal policy for this configuration; (right) Standard Q-learning remains stuck in a suboptimal policy for the new action space. Double arrows indicate the new actions available to the agent (jumping).}
+    \label{fig:q-value-comp2}
+\end{figure*}
+
+In the next Section~\ref{sec:validation}, we present a real-world use case for traffic light control, where the agent is provided with a new set of actions following concept drift detection in the reward function. This enables the agent to efficiently learn how to utilize the new actions and optimize traffic flow by adapting its policy to varying congestion levels. The agent acquires new capabilities without forgetting previously learned behaviors, maintaining adaptability to changing environmental conditions.
 
 \endinput
 

@@ -55,7 +55,7 @@ Gridworld consists of a rectangular matrix ($9\times 9$ in our case). In Gridwor
 associated with a reward of $-1$, except for a single goal state that has a reward of $+100$ as shown 
 in the left part of \fref{fig:r-change}. The agent begins each episode at the grid's center and may move 
 in any direction \spy{up}, \spy{down}, \spy{left}, or \spy{right}. Initially, the goal is placed in the top-left 
-corner, but may move to any other state, as shown in the right-hand side of \fref{fig:r-change}.
+corner, but it may be relocated to any other position, as illustrated on the right-hand side of \fref{fig:r-change}. We also consider scenarios in which Gridworld contains walls that block the agent's movement according to its initial set of actions (see \fref{fig:q-value-comp2}). Subsequently, the action space is extended to include new actions that provide the agent with additional capabilities (e.g., jumping). The agent is expected to adapt to these changes and efficiently adjust its policy.
 
 \begin{figure*}[hptb]
     \centering
