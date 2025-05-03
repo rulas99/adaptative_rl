@@ -51,7 +51,7 @@ All experiments are run on an Intel Core i5 with 64GB RAM. The experiments use v
 
 For the evaluation in both application domains we compare the standard Q-learning algorithm (used as a baseline) and \adaptiverl.
 \begin{itemize}
-  \item \emph{standard Q-learning} agents are defined with a fixed $\alpha=0.1$, and $\varepsilon$ decayed exponentially to $0.01$ from $0.9$.
+  \item \emph{Standard Q-learning} agents are defined with a fixed $\alpha=0.1$, and $\varepsilon$ decayed exponentially to $0.01$ from $0.9$.
   \item \adaptiverl agents use the PH-test to detect drifts in episode-rewards, resets $\varepsilon\!=\!1$ upon detection, and adaptively adjusts $\alpha$ based on the TD-error (\cf. \fref{sec:implementation}).  
 \end{itemize}
 
