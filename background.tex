@@ -8,7 +8,7 @@
 %%%%
 \subsection{\acl{RL}}
 
-In \ac{RL}, intelligent agents learn to map environmental situations (environment states) to actions that maximize a numerical reward signal received from the environment over the long term~\cite{sutton18}. \ac{RL} problems are commonly formulated as Markov Decision Processes (MDPs), defined by the tuple $\mathcal{M} = \langle \mathcal{S}, \mathcal{A}, P, R, \gamma \rangle$, where:
+In \ac{RL}, agents learn to map environmental situations (environment states) to actions that maximize a numerical reward signal received from the environment in the long term~\cite{sutton18}. \ac{RL} problems are formulated as Markov Decision Processes (MDPs), defined by the tuple $\mathcal{M} = \langle \mathcal{S}, \mathcal{A}, P, R, \gamma \rangle$, where:
 $\mathcal{S}$ is the state space, comprising all relevant states of the environment;
 $\mathcal{A}$ is the action space, i.e., the set of all actions the agent can perform to affect the environment;
 $P(s_{t+1} \mid s_t, a_t)$ is the transition probability from state {\color{purple}$s_t$} to {\color{purple}$s_{t+1}$} under action {\color{purple}$a_t$};
@@ -60,13 +60,13 @@ we use two scenarios of the Gridworld benchmark as a running example.
 Gridworld consists of a rectangular matrix ($9\times 9$ in our case). In Gridworld, every cell is 
 associated with a reward of $-1$, except for a single goal state that has a reward of $+100$ as shown 
 in the left-hand side of \fref{fig:r-change}. The agent begins each episode at the grid's center and may 
-move in any direction \spy{up}, \spy{down}, \spy{left}, or \spy{right}. Initially, the goal is placed in the 
+move in four directions: \spy{up}, \spy{down}, \spy{left}, or \spy{right}. Initially, the goal is placed in the 
 top-left corner.  
 
 In the first scenario, we allow the goal state of the environment to change. Such changes are unknown 
 to the agents beforehand~\cite{cardozo21} and maybe due to the reallocation of 
 objectives~\cite{khetarpal2022continualreinforcementlearningreview} (\eg reorganizing products in a 
-warehouse for robotic fulfillment systems), or the shift to new objectives~\cite{florensa18} (UAV drones 
+warehouse for robotic fulfillment systems), or the shift to new objectives~\cite{florensa18} (\eg UAV drones 
 changing their mission due to flight plan changes, or changing in leadership for flight formations).
 
 \begin{figure*}[hptb]
@@ -76,7 +76,7 @@ changing their mission due to flight plan changes, or changing in leadership for
     \label{fig:r-change}
 \end{figure*}
 
-Additionally, we consider a scenario adding walls to the Gridworld, blocking the agent's movement 
+Additionally, we consider a scenario of adding walls to the Gridworld, blocking the agent's movement 
 according to its initial set of actions (\fref{fig:q-value-comp2}). For such scenario, we enable the agent 
 to  extended its action space by acquiring new actions that provide additional capabilities to the agent 
 (\ie jumping). Such situations are common in robotics for modular/evolving 
