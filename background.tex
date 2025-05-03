@@ -40,8 +40,13 @@ the Bellman learning equation as follows:
 
 \vspace{1em}
 \input{equations/bellman}
+\vspace{1em}
 
-While Q-learning converges under stationary conditions (with appropriate decay of \lrate{\alpha}), it can struggle when $P_t$ or $R_t$ change over time. Our work builds on this foundation by incorporating online concept-drift detection and adaptive updates, enabling the agent to remain effective in non-stationary MDPs. We focus particularly on shifts in $R_t$, which may also induce changes in $\mathcal{A}_t$.
+While Q-learning converges under stationary conditions (with appropriate decay of \lrate{\alpha}), it 
+can struggle when $P_t$ or $R_t$ change over time. Our work builds on this foundation by 
+incorporating online concept-drift detection and adaptive updates, enabling the agent to remain 
+effective in non-stationary MDPs. We focus particularly on shifts in the reward function $R_t$, which 
+may also induce changes in the action space $\mathcal{A}_t$.
 
 
 %%%%
@@ -50,12 +55,19 @@ While Q-learning converges under stationary conditions (with appropriate decay o
 
 
 To motivate the adaptation of agent's behavior to changing goals and the acquisition of new actions, 
-we use the Gridworld benchmark as a running example.
+we use two scenarios of the Gridworld benchmark as a running example.
+
 Gridworld consists of a rectangular matrix ($9\times 9$ in our case). In Gridworld, every cell is 
 associated with a reward of $-1$, except for a single goal state that has a reward of $+100$ as shown 
-in the left part of \fref{fig:r-change}. The agent begins each episode at the grid's center and may move 
-in any direction \spy{up}, \spy{down}, \spy{left}, or \spy{right}. Initially, the goal is placed in the top-left 
-corner, but it may be relocated to any other position, as illustrated on the right-hand side of \fref{fig:r-change}. We also consider scenarios in which Gridworld contains walls that block the agent's movement according to its initial set of actions (see \fref{fig:q-value-comp2}). Subsequently, the action space is extended to include new actions that provide the agent with additional capabilities (e.g., jumping). The agent is expected to adapt to these changes and efficiently adjust its policy.
+in the left-hand side of \fref{fig:r-change}. The agent begins each episode at the grid's center and may 
+move in any direction \spy{up}, \spy{down}, \spy{left}, or \spy{right}. Initially, the goal is placed in the 
+top-left corner.  
+
+In the first scenario, we allow the goal state of the environment to change. Such changes are unknown 
+to the agents beforehand~\cite{cardozo21} and maybe due to the reallocation of 
+objectives~\cite{khetarpal2022continualreinforcementlearningreview} (\eg reorganizing products in a 
+warehouse for robotic fulfillment systems), or the shift to new objectives~\cite{florensa18} (UAV drones 
+changing their mission due to flight plan changes, or changing in leadership for flight formations).
 
 \begin{figure*}[hptb]
     \centering
@@ -63,6 +75,17 @@ corner, but it may be relocated to any other position, as illustrated on the rig
     \caption{Non-Stationary Gridworld: Concept drift is induced by relocating the reward. The agent starts at the center and must reach the goal, which alternates between the top-left and bottom-right corners every 300 episodes.}
     \label{fig:r-change}
 \end{figure*}
+
+Additionally, we consider a scenario adding walls to the Gridworld, blocking the agent's movement 
+according to its initial set of actions (\fref{fig:q-value-comp2}). For such scenario, we enable the agent 
+to  extended its action space by acquiring new actions that provide additional capabilities to the agent 
+(\ie jumping). Such situations are common in robotics for modular/evolving 
+robots~\cite{eiben20evolving,miras20environmental}, or swarm behavior~\cite{schranz20swarm} where 
+robots acquire new capabilities due to the physical attachment of parts, the possibility of combining 
+actions with nearby robots, or the transfer of responsibilities/behavior between robots. Whichever the 
+case may be, the agent is expected to adapt to these changes and efficiently adjust its policy using 
+the newly acquired behavior.
+
 
 \endinput
 
