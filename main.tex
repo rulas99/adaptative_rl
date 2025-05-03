@@ -49,15 +49,14 @@ university-email}
 \begin{abstract}
 In Reinforcement Learning, agents learn to solve specific tasks through the 
 exploration of the environment in which they execute. Agents' behavior is
-specialized towards a goal, gathered from the environment, according to the 
-agent's experience from the execution of its actions. While effective in optimizing the behavior for a 
-goal, the performance of agent's rapidly decreases when the environment conditions change.
+specialized towards a given goal, and learnt from agent's experience from the execution of its actions. While effective in optimizing the behavior for a 
+specific goal, the performance of agent's rapidly decreases when the environment conditions change.
 This paper introduces \adaptiverl, a self-adaptive Q-learning agent that enables on-the-fly adaptation 
 without full retraining. \adaptiverl leverages proactive environment monitoring and concept-drift 
 detection to trigger dynamic adjustment of learning and exploration parameters only when needed, 
 while preserving prior policy knowledge to mitigate catastrophic forgetting. Additionally, \adaptiverl 
 supports seamless incorporation of new actions into the agent’s action space. We validate our approach 
-on a standard RL benchmark with shifting reward functions and the introduction of new action. 
+on a standard RL benchmark with shifting reward functions and the introduction of a new action. 
 Additionally we validate our approach in a realistic traffic signal control application to manage road 
 intersections. The results demonstrate the proposed approach evidences superior convergence 
 speed, resource efficiency, and continuous adaptation to evolving conditions, with respect to the 

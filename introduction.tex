@@ -4,9 +4,9 @@
 \section{Introduction}
 \label{sec:introduction}
 
-\acf{RL} is a subset of \ac{ML} techniques in which agents learn by interacting with an environment, 
+\acf{RL} is a subset of \ac{ML} in which agents learn by interacting with an environment, 
 through trial and error. An agent receives a scalar reward (positive or negative) for each interaction 
-step, based on the action taken. The objective of the agent is to maximize its cumulative long-term 
+step, based on the outcome of the action taken. The objective of the agent is to maximize its cumulative long-term 
 reward~\cite{sutton18}. Traditional \ac{RL} algorithms, such as Q-Learning, assume stationary 
 \acp{MDP}, where transition probabilities and reward functions are constant over 
 time~\cite{meta-rl-traffic}. However, this assumption restricts \ac{RL} agents' effectiveness in 
@@ -34,9 +34,9 @@ Our method effectively addresses non-stationary environments by continuously mon
 updating agents' learning strategy. 
 
 We validate \adaptiverl with two applications. One application in the context of \ac{RL}, using a 
-standard \ac{RL} benchmark as Gridworld, and one application in the context of self-adaptive systems, 
+standard \ac{RL} benchmark Gridworld, and one application in the context of self-adaptive systems, 
 with a traffic signal control at city intersections. In the first scenario, environment goals are changed 
-back and forth at defined points in the execution to observe the behavior of the environment in leaning 
+back and forth at defined points in the execution to observe the behavior of the environment in leraning 
 (or lack there of) new behavior. Additionally, we present a second independent scenario introducing 
 new actions to the agent. In the second scenario we combine the changing goals and introduction of 
 new actions to observe if the agent is effective in detecting both the new goal and action incorporating 
