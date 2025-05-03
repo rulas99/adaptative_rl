@@ -180,7 +180,7 @@ occurs, restoring the traffic balance, both agents present a rapid performance i
 are able to quickly exploit the initial policy. 
 
 Finally, we observe the built-in penalty for wasted green time ensures \adaptiverl does not over-serve 
-one lane as queues shrink, automatically balancing old and new phases without discarding any 
+one lane as queues reduce, automatically balancing old and new phases without discarding any 
 actions.
 
 This traffic-signal control case study confirms that \adaptiverl can effectively:
@@ -193,8 +193,8 @@ This traffic-signal control case study confirms that \adaptiverl can effectively
   resulting in resource-efficient policies.
 \end{enumerate}
 
-In practice, modern traffic controllers can update phase timings in real time; endowing them with 
-self-adaptive intelligence, as in \adaptiverl, allows continuous, automated adjustment to changing 
+This enables traffic controllers to update phase timings in real time, i.e., to be self-adaptive, 
+ as \adaptiverl allows continuous automated adjustment to changing 
 traffic patterns without manual retuning or agent retraining.
 
 
