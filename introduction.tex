@@ -33,9 +33,17 @@ while adaptations to the goals (\ie rewards) or action space remain an open ques
 Our method effectively addresses non-stationary environments by continuously monitoring and 
 updating agents' learning strategy. 
 
-We validate \adaptiverl using a self-adaptive systems context, specifically applied to traffic signal 
-control at city intersections. In our scenario signal phases continuously influence state transitions 
-and rewards~\cite{meta-rl-traffic}. By demonstrating the effectiveness of \adaptiverl under these conditions, we underline its suitability for self-adaptive systems, particularly those relying on streaming data where concept drift may occur, making efficient adaptation essential.
+We validate \adaptiverl with two applications. One application in the context of \ac{RL}, using a 
+standard \ac{RL} benchmark as Gridworld, and one application in the context of self-adaptive systems, 
+with a traffic signal control at city intersections. In the first scenario, environment goals are changed 
+back and forth at defined points in the execution to observe the behavior of the environment in leaning 
+(or lack there of) new behavior. Additionally, we present a second independent scenario introducing 
+new actions to the agent. In the second scenario we combine the changing goals and introduction of 
+new actions to observe if the agent is effective in detecting both the new goal and action incorporating 
+them into the new learned policy. The use of signal phases continuously influence state transitions and 
+rewards~\cite{meta-rl-traffic}. By demonstrating the effectiveness of \adaptiverl under these conditions, 
+we underline its suitability for self-adaptive systems, particularly those relying on streaming data where 
+concept drift may occur, making efficient adaptation essential.
 
 %%possibly remove
 This paper is structured as follows: \fref{sec:background} introduces theoretical foundations relevant to 
