@@ -4,17 +4,65 @@
 %%
 \section{Conclusion and Future Work}
 \label{sec:conclusion}
-We have demonstrated that \adaptiverl, a self-adaptive Q-learning agent, can effectively detect and respond to non-stationary environments. By leveraging concept drift detection and dynamically adjusting its learning rate and exploration parameters, \adaptiverl consistently outperforms standard Q-learning agents in scenarios where the reward function changes over time. Its adaptive mechanisms are well aligned with the principles of self-adaptive systems, enabling the agent to autonomously adjust its behavior in response to evolving environmental conditions.
 
-\adaptiverl's adaptability is aligned with the definition proposed by~\citet{abel2023definitioncontinualreinforcementlearning}, treating learning as a continuous process rather than a one-time optimization. Notably, it addresses one of the major challenges in continual reinforcement learning (CRL): the problem of catastrophic forgetting.\adaptiverl retains prior policy knowledge while adapting to new configurations, enabling knowledge reuse and accelerating convergence—even when faced with overlapping contradictory subtasks, as highlighted by~\citet{Bagus2022}.
+This paper presents \adaptiverl, a self-adaptive approach to enable Q-learning agents to effectively 
+detect and adapt to non-stationary environments. In particular, with this work we address the problem 
+of agents' adaptation to changes in their objectives or goal states, as well as changes in their action 
+space by incorporating new actions.
+The adaptive capabilities of \adaptiverl agents are aligned with the principles of self-adaptive systems, 
+enabling the agent to autonomously adjust its behavior in response to evolving environmental 
+conditions.
+Agent adaptation to changing goals and actions is realized by leveraging concept drift detection, the 
+introduction of the dynamic learning rate, and the dynamic adjustment of the exploration parameters. 
+\adaptiverl proves effective in adapting agents' behavior to the environment, resulting in a sustained 
+performance, in contrast of the baseline Q-learning agents, which observe a significant performance 
+drop upon environment changes. 
 
-We further validated \adaptiverl in a realistic traffic signal control scenario, where the agent successfully adapted to changing traffic patterns and performance requirements. The use of a dynamic reward function, including penalties for over-serving, proved effective in promoting resource-efficient policies. Additionally, by appending new signal phases (i.e., new actions) upon drift detection, \adaptiverl demonstrated its ability to acquire new capabilities without discarding existing ones. This is particularly relevant in real-world traffic systems, where signal configurations can be updated in near real time; equipping them with adaptive intelligence allows for continuous optimization without the need for manual retuning.
+The adaptability strategy proposed with \adaptiverl is in line with the ideas of 
+\ac{CRL}~\cite{abel2023definitioncontinualreinforcementlearning}, treating learning as a continuous 
+process rather than a one-time optimization. Notably, \adaptiverl addresses one of the major 
+challenges put forward in \ac{CRL}: the problem of catastrophic forgetting. \adaptiverl retains prior 
+policy knowledge while adapting to new configurations, enabling knowledge reuse and accelerating 
+convergence as a consequence, even when faced with overlapping contradictory 
+subtasks~\citet{Bagus2022}. The observed performance increase when using \adaptiverl is between 
+$1.7\times$ and $1.9\times$.
 
-\adaptiverl stands as a promising approach for self-adaptive systems requiring lightweight, real-time learning solutions in environments with limited computational resources.
+We validate the effectiveness of \adaptiverl in two application domains, a proof of concept \ac{RL} 
+benchmark, and a realistic traffic signal control scenarios. In both scenarios, the \adaptiverl agent 
+successfully adapts to the changing environment conditions, switching of goals or introduction of new 
+actions in the first case, and changing traffic patterns and performance requirements in the second 
+case. In both cases, \adaptiverl evidences a performance improvement in contrast to the baseline 
+Q-learning implementation.
+The introduction of new actions (be that as specific signals as in Gridworld, or in response to 
+drift detection in the traffic signal application), \adaptiverl demonstrated its ability to acquire new 
+capabilities without discarding existing ones. This is particularly relevant in real-world traffic systems, 
+where signal configurations can be updated in real time; equipping them with adaptive intelligence to 
+allow the system for continuous optimization without the need for manual system retuning.
+Finally, for the traffic signal control application, we recognize that the use of the dynamic reward 
+function, including penalties for over-serving, proved effective in promoting resource-efficient policies. 
 
-In future work, we plan to integrate \adaptiverl with complementary mechanisms, such as active learning, and deploy it in edge devices for real-world applications (e.g., \ac{IOT}). Additionally, we aim to generalize its core principles from tabular methods to deep learning architectures. This includes incorporating memory-based plasticity to support knowledge reuse across tasks and enabling online test-time adaptation, allowing agents to respond to new situations without requiring full retraining.
+In conclusion, \adaptiverl stands as a promising approach for self-adaptive systems requiring 
+lightweight, real-time learning solutions in environments with limited computational resources.
+\adaptiverl is the first tabular self-adaptive agent to seamlessly integrate concept drift detection, 
+dynamic hyperparameter adaptation, and on-the-fly action-space expansion within a unified 
+framework. This approach addresses a significant gap in existing methods and represents a step 
+forward toward robust continual learning agents capable of operating in highly dynamic domains.
 
-Finally, based on our review of the state of the art, \adaptiverl is the first tabular self-adaptive agent to seamlessly integrate concept drift detection, dynamic hyperparameter adaptation, and on-the-fly action-space expansion within a unified framework. This approach addresses a significant gap in existing methods and represents a step forward toward robust continual learning agents capable of operating in highly dynamic domains.
+Our work present an initial evaluation an adaptation of \ac{RL} agents to changing environment 
+conditions. As avenues of future work, we aim to generalize its core principles from tabular methods to 
+deep learning architectures. This includes incorporating memory-based plasticity to support knowledge 
+reuse across tasks and enabling online test-time adaptation, allowing agents to respond to new 
+situations without requiring full retraining.
+
+Moreover, we will extend the evaluation of our work to different application domains combining both 
+goal changes and the introduction of new actions to increase the generalization of our results. Among 
+the extension to the evaluation we envision an empirical evaluation of the introduced learning 
+parameter $k$, the removal of agent actions, and the combination of environment changes under 
+different contexts.
+
+Finally, we plan to integrate \adaptiverl with complementary mechanisms, such as active learning, and 
+deploy it in edge devices for real-world applications (\eg \ac{IOT}, or robotics).  
+
 
 \endinput
 
