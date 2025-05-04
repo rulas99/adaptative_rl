@@ -57,7 +57,7 @@ may also induce changes in the action space $\mathcal{A}_t$.
 To motivate the adaptation of agent's behavior to changing goals and the acquisition of new actions, 
 we use two scenarios of the Gridworld benchmark as a running example.
 
-Gridworld consists of a rectangular matrix ($9\times 9$ in our case). In Gridworld, every cell is 
+Our Gridworld configuration, consists of a matrix (of $9\times 9$) where every cell is 
 associated with a reward of $-1$, except for a single goal state that has a reward of $+100$ as shown 
 in the left-hand side of \fref{fig:r-change}. The agent begins each episode at the grid's center and may 
 move in four directions: \spy{up}, \spy{down}, \spy{left}, or \spy{right}. Initially, the goal is placed in the 
@@ -79,12 +79,7 @@ changing their mission due to flight plan changes, or changing in leadership for
 Additionally, we consider a scenario of adding walls to the Gridworld, blocking the agent's movement 
 according to its initial set of actions (\fref{fig:q-value-comp2}). For such scenario, we enable the agent 
 to  extended its action space by acquiring new actions that provide additional capabilities to the agent 
-(\ie jumping). Such situations are common in robotics for modular/evolving 
-robots~\cite{eiben20evolving,miras20environmental}, or swarm behavior~\cite{schranz20swarm} where 
-robots acquire new capabilities due to the physical attachment of parts, the possibility of combining 
-actions with nearby robots, or the transfer of responsibilities/behavior between robots. Whichever the 
-case may be, the agent is expected to adapt to these changes and efficiently adjust its policy using 
-the newly acquired behavior.
+(\ie, jumping). Such situations are common in robotics, particularly with modular or evolving robots~\cite{eiben20evolving,miras20environmental}, or in swarm robotics~\cite{schranz20swarm}, where agents acquire new capabilities through the physical attachment of components, the ability to combine actions with nearby robots, or the transfer of responsibilities and behaviors among agents. In all these cases, the agent is expected to adapt to such changes and efficiently update its policy to leverage the newly acquired behaviors.
 
 
 \endinput

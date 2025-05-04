@@ -2,8 +2,6 @@
 % !TEX root = main.tex
 
 %%
-
-%TODO RAUL: please change y axis on both figures from q-value to "total reward per episode" and for exploration and exploitation labels change them to "exploration reward" and "exploitation reward" - it is not clear what's happening in the graph currently to labelling needs to clarify it
 \section{\ac{RL} Agents with Adaptive Behavior}
 \label{sec:implementation}
 
@@ -44,10 +42,7 @@ adaptation and resilience in non-stationary contexts.
 The first step for agents to adapt their behavior to an evolving environment is to continuously monitor 
 the environment. \ac{RL} environment monitoring is intrinsic through the interaction with the 
 environment, as agents continuously observed rewards after each action execution. To detect 
-changes in the environment, \ie drift, we implement the 
-PH-test~\cite{mignon2017adaptive,networkdynamicrl}. The PH-test calculates the cumulative 
-difference between observed rewards and the running mean reward, incorporating a sensitivity 
-parameter ($\delta$). A concept drift (environmental change) is flagged when the cumulative 
+changes in the environment, \ie drift, we implement the Page-Hinkley Test (PH-test)~\cite{mignon2017adaptive,networkdynamicrl}. The PH-test calculates the cumulative difference between observed rewards and the running mean reward, incorporating a sensitivity parameter ($\delta$). A concept drift (environmental change) is flagged when the cumulative 
 difference surpasses a predefined threshold. Selecting an appropriate threshold value is crucial, as it 
 determines the sensitivity of drift detection. Higher thresholds result in more conservative detection, 
 while lower thresholds increase sensitivity to changes, this value must be selected based on the 
