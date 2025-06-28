@@ -1,0 +1,125 @@
+----------------------- REVIEW 1 ---------------------
+
+SUBMISSION: 34
+TITLE: Adapting the Behavior of Reinforcement Learning Agents to Changing Action Spaces and Reward Functions
+AUTHORS: Raúl De la Rosa, Ivana Dusparic and Nicolás Cardozo
+
+----------- Overall evaluation -----------
+SCORE: -2 (reject)
+----- TEXT:
+Summary: Reinforcement learning is a mathematical framework that allows agents (broadly defined) to make decisions in complex environments that eventually yield valuable outcomes. The paper notes that in classic reinforcement learning the environment is stable and thus the mapping of action to reward can follow a Markov decision proces (MDP). However, when the environment is dynamic, time-varying MDP are better suited for reinforcement learning. The paper introduces Morphin, an RL system that support multiple types of time-varying MDP. Namely, continual learning and meta-learning. The results with two datasets show that Morphin detects environment changes and adapts policies well.
+
+This reviewer scored this paper as a reject because (1) the system is not adequately described to understand the contribution, (2) the paper missed a wealth of related work, and more generally (3) it was not clear to the reviewer that the paper has the potential to advance state-of-the-art.
+
+(1) Where is the description of Morphin? It seems that Section III is the limit of the description of the system.  There are is not a diagram linking system components visually. The reviewer did not follow the link to the URL.  It is on the author's to provide a more complete description of the proposed technique within the page limit afforded by the conference. To save space, the long review of classic reinforcement learning could have been removed.  
+
+(2) In 2024 alone, ACSOS published 3 related papers using reinforcement learning in *more * realistic environments. None are cited by this paper. The paper does not reflect a strong understanding of where research communities have take reinforcement learning in recent years.
+
+(3) Even if issues 1&2 were addressed, it is not clear that Morphin makes a real, significant intellectual contribution. If it simply combines two well known techniques into an RL system, that would not be significant contribution. Here, the reviewer is encouraging the authors to think of this rejection as a crossroads.  Either, Morphin must become substantially more sophisticated with a novel integration of online learning techniques or consider a pivot as Morphin is well behind state-of-the-art in the field right now.
+
+
+----------------------- REVIEW 2 ---------------------
+
+SUBMISSION: 34
+TITLE: Adapting the Behavior of Reinforcement Learning Agents to Changing Action Spaces and Reward Functions
+AUTHORS: Raúl De la Rosa, Ivana Dusparic and Nicolás Cardozo
+
+----------- Overall evaluation -----------
+SCORE: -2 (reject)
+----- TEXT:
+This paper introduces MORPHIN, a self-adaptive Q-learning framework designed to enable agents to adapt to non-stationary environments, specifically addressing changes in reward functions (goals) and the available action space. MORPHIN leverages concept drift detection (Page-Hinkley Test) to trigger adjustments in the agent's learning rate (α) and exploration rate (ε), aiming to preserve prior policy knowledge while adapting to new conditions. While the paper aims to address a very important problem, the lack of clear, formal descriptions of critical mechanisms (especially new action incorporation and the precise nature of knowledge preservation) makes it difficult to fully assess its technical contribution and reproducibility.
+
+Strengths:
+- The paper addresses the critical challenge of adapting RL agents to dynamic environments where reward functions and action spaces can change over time. This is a well-recognized issue in CRL and SAS. (Though the extent to which this challenge is solved by the proposed method is debatable).
+- The core idea of using a concept drift detection mechanism (PH-test) to signal the need for adaptation (modifying exploration and learning rates) is a logical and established strategy in machine learning.
+
+Weaknesses / Areas for Improvement:
+- The paper claims MORPHIN can handle an expanding action space (i.e., incorporating new actions), but it does not adequately explain the mechanics of this. Specifically, how is the Q-table (which stores state-action values) structurally modified when a new action a_new is introduced?
+- It claims MORPHIN preserves prior policy knowledge and mitigates catastrophic forgetting. However, the described mechanisms (resetting ε to 1 and using an adaptive α upon detected environmental change) do not seem fundamentally different from a standard Q-learner being forced to re-explore, beyond the triggering mechanism. The paper does not describe an explicit mechanism for structurally protecting or selectively reusing specific old Q-values. If "preserves" simply means "does not wipe the Q-table and relearns," the term might be too strong.
+- It uses the Page-Hinkley (PH) test for concept drift detection. However, the effectiveness and robustness of this drift detection are questionable. Specifically, First, the PH-test relies on a threshold δ, which the paper states "must be selected based on the magnitude order of rewards and possible changes over them," but there is no discussion on its sensitivity or guidance for its selection.Second, in the traffic-signal control experiment, the PH-test failed to detect the second concept drift.
+- The dynamic learning rate α* mechanism introduces a new hyperparameter k, which "controls the sensitivity of the learning rate to the TD error" and "must be carefully (and empirically) tuned." The paper does not provide insight into how k was chosen for the experiments, its impact on performance, or its generalizability across different environments, significantly diminishing its practical utility.
+
+
+----------------------- REVIEW 3 ---------------------
+
+SUBMISSION: 34
+TITLE: Adapting the Behavior of Reinforcement Learning Agents to Changing Action Spaces and Reward Functions
+AUTHORS: Raúl De la Rosa, Ivana Dusparic and Nicolás Cardozo
+
+----------- Overall evaluation -----------
+SCORE: -2 (reject)
+----- TEXT:
+This paper presents MORPHIN, a variation of classical Q-Learning that addresses the research problem of RL agent adaptation to changing goals and action spaces.
+The method is evaluated on a toy maze problem, what is standard in evaluating basic RL algorithms such as Q-Learning, and additionally on an urban traffic control scenario.
+Presented results reveal that the adaptation lead to improved recovery performance of RL-agents following the MORPHIN approach in the investigated testbeds.
+
+The paper is in general well written and comes with a sound structure. Especially in the middle part of the paper, however, there became numerous typos and grammatical errors visible. I recommend the authors to have another round of proof-reading for their manuscript. Some of the spotted typos are indicated below.
+Since learning constitutes an integral capability of self-adaptive systems, the contribution fits the scope of the conference well and the significance of the problem is clearly given in my point of view.
+
+After reading the paper, some major concerns remain which I'd like to summarize as follows:
+
+1) Introduction of the terms concept drift / shift: Since the paper often refers to these terms and further such as non-stationary MDPs etc as well, I recommend that the authors briefly introduce them by delineating these concepts and bring them in line with the standard RL system model more explicitly. For instance: A concept drift usually involves the covariate distribution P(X) as well as the a posteriori distribution P(Y|X), while a covariate shift would be restricted to changes in X. It should be better explained how this translates to the sequential decision making problem RL addresses and the main components of the MDP (S,A,P,R).
+
+2) Clarity of the figures and proposed mechanisms:
+- Figure 2: it is unclear what these different vertical levels of the blue reward points mean. This is not properly described. Furthermore, what leads to the repeated increases and declines of epsilon in between the concept drifts (red dashed lines)? This should be more prominently described in the text.
+- III.-A: I would prefer to see a supplemental pseudo-code for the adaptive drift detection mechanism and any other modifications applied in the MORPHIN approach.
+- page 4 / column 1 / last paragraph: How is it visible in Figure 3 that the agent enables exploration short after occurrence of the concept drift? In this section the adaptation of the learning rate alpha is described which actually does not directly influence the exploration of the agent but its learning speed. Please clarify this.
+
+3) Limited scope and expressiveness of the initial experiments and results reported:
+- The change of the reward function is only addressed by changing the `goal position' to another grid cell in the maze. This is reflected in the reward function in that another cell will yield a high positive reward in contrast to other cells delivering negative rewards. Furthermore, the experiments do include new actions (jumping over walls in the maze) but do not reflect subtraction of actions, which might also be interesting to see how the agents react.
+- Furthermore, the considered traffic scenario is not clearly defined. The underlying MDP is unclear, at least the state transition function. Is this based on a simulation or on heuristic functions? This needs more detail please. From what I understood, I feel that this scenario is of very limited complexity for a real-world scenario and conclusions drawn from that regarding the external validity of the approach.
+- The presented algorithm configurations under IV.-B are not justified properly. How have the settings be determined exactly? What is the sensitivity of MORPHINs performance on the newly introduced hyperparameters that steer the self-adaptation of epsilon and alpha? (At least two have been introduced).
+- To what extent does detrimental forgetting occur regarding the old goals when the simulations run longer than the limited number of 1500 or 400 episodes, respectively? This seems to not have been investigated so far. The presented results are considered more a snapshot of the performance after these fixed number of episodes. But how has this number been determined?
+- Lastly, the paper would benefit from a tabular representation of the metrics, especially for the traffic scenario case. At least some mean values and standard deviation over the experiment repetitions must be reported in the text and not only via the plots. Significance testing of the statistical differences between MORPHIN and Q-Learning would be preferable.  
+
+4) Novelty and significance of contribution:
+- After reading the paper I got the impression that the main contribution is the combination of two self-adaptation mechanisms for two important hyperparameters for the most basic Q-Learning algorithm, namely the learning rate alpha and the exploration rate epsilon. Such mechanisms have been explored largely in the literature already, but -- according to the related work section -- seem to be not considered in a combined way. However, this still raises the question if this is a big enough leap pushing the state of the art. The authors' presentation of the related works and the delineation to the contribution of their paper was not convincing enough for me. The combination of concept drift detection and the possibility for on-the-fly action space expansion was named, however, as the authors note in the paper, there is not particular method for the latter, but both adaptations to the changed environmental conditions are tackled by the self-adaptation of the hyperparameters.
+- Why did the authors confine their method to basic Q-Learning algorithms? The adaptation of the exploration and learning rate could have been also applied to more recent deep reinforcement learning algorithms.  
+
+
+Further minor issues:  
+- Please add reference in the introduction for reinforcement learning
+- The formal definition of a non-stationary MDP (as sequence of MDPs over time t) as a set {MDP_t} mathematically seems to be inappropriate since it would exclude that the exact same MDP can appear twice in the sequence, right?
+- `Can rapidly convergence...' --> `can rapidly converge...'
+- `we introduce an adaptive mechanisms...' --> `mechanism'
+- `agents continuously observed' --> `observe'?
+- `posible' --> `possible'
+- `The key to enable agents, ...' --> to `enable' for what? --> Please clarify
+- `The TD error quantifies the difference between the predicted reward and the actual reward received' --> this is not perfectly true and a bit imprecise. Actually the state-action (or Q) values are predicted which represent the expected discounted cumulative (i.e., long term) reward. Please be more precise at this place.
+- `Nonetheless, the runtime efficiency the agents is actually lower' --> what is meant with runtime efficiency here exactly. I think there is also an 'of' missing.
+- In the future work section `Active Learning' is mentioned but it remains unclear for what purpose this should be explored further.
+- The references sections exceeds the page limit. Please shorten accordingly.
+- Consistency: learning parameters vs. hyperparameters. Authors should clearly delineate between the two concepts. Learning parameters usually refer to the weights of a parametric model such as a neural network, whereas in this work hyperparameters are adapted.
+
+Based on the points of criticism as summarized above, I unfortunately cannot recommend acceptance of the contribution as a full main-track conference paper in its current state.
+
+
+----------------------- REVIEW 4 ---------------------
+
+SUBMISSION: 34
+TITLE: Adapting the Behavior of Reinforcement Learning Agents to Changing Action Spaces and Reward Functions
+AUTHORS: Raúl De la Rosa, Ivana Dusparic and Nicolás Cardozo
+
+----------- Overall evaluation -----------
+SCORE: -2 (reject)
+----- TEXT:
+The paper presents a self-adaptive Q-learning agent capable of on-the-fly adaptation without requiring full retraining. To dynamically adjust learning, the proposed approach relies on proactive environment monitoring and concept drift detection. In addition, it also supports the incorporation of new actions into the agent's action space. The evaluation is conducted using a standard reinforcement learning benchmark, as well as a traffic signal control application.
+
+The topic of the paper aligns well with ACSOS cfp and is interesting. The paper is well written.
+However, I am not fully convinced by the proposed approach, for the reasons outlined below.
+
+Some of the solutions proposed by the authors appear to be incremental with respect to the state of the art. In particular, the idea of adaptively increasing the exploration rate by modifying the ε-greedy strategy after a change point is not novel, as the authors themselves acknowledge. Change point detection based on Page-Hinkley statistics has also been applied, see for example:
+- Hartland et al., Change point detection and meta-bandits for online learning
+in dynamic environments, CAp 237–250, 2007. https://nam10.safelinks.protection.outlook.com/?url=https%3A%2F%2Finria.hal.science%2Finria-00164033v1%2Fdocument&data=05%7C02%7Cn.cardozo%40uniandes.edu.co%7C838145bd024f4218258908ddb5e2902b%7Cfabd047cff48492a8bbb8f98b9fb9cca%7C0%7C0%7C638866706877376443%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=CYAMz4Yls12moGb%2FiMjmr5d6FYtOxY5NJOpPdnbZMU4%3D&reserved=0
+- Padakandla, A Survey of Reinforcement Learning Algorithms for Dynamically Varying Environments. ACM Comput. Surv. 54, 6, 2022, https://nam10.safelinks.protection.outlook.com/?url=https%3A%2F%2Fdoi.org%2F10.1145%2F3459991&data=05%7C02%7Cn.cardozo%40uniandes.edu.co%7C838145bd024f4218258908ddb5e2902b%7Cfabd047cff48492a8bbb8f98b9fb9cca%7C0%7C0%7C638866706877403407%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=jxqNWuyQk9JhsQHzahxEbYxG%2F%2FEPa1IFzOGjSM9%2Fr8M%3D&reserved=0
+As a result, the overall novelty of the proposed approach appears to be limited.
+
+Furthermore, the paper lacks a comparison with other approaches that address non-stationary MDPs. Several relevant works tackle these issues, including some that consider the traffic signal control problem, as in the submitted paper.
+- Padakandla and Bhatnagar, Reinforcement learning algorithm for non-stationary environments. Appl Intell 50, 3590–3606 (2020). https://nam10.safelinks.protection.outlook.com/?url=https%3A%2F%2Fdoi.org%2F10.1007%2Fs10489-020-01758-5&data=05%7C02%7Cn.cardozo%40uniandes.edu.co%7C838145bd024f4218258908ddb5e2902b%7Cfabd047cff48492a8bbb8f98b9fb9cca%7C0%7C0%7C638866706877419742%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=RHuxaT%2BnNX8BEXrSQTTz5y2NftK0%2BQrjtYKOaDWsxwQ%3D&reserved=0
+- Mao et al., Near-Optimal Model-Free Reinforcement Learning in Non-Stationary Episodic MDPs
+Proceedings of the 38th International Conference on Machine Learning, PMLR 139:7447-7458, 2021. https://nam10.safelinks.protection.outlook.com/?url=https%3A%2F%2Fproceedings.mlr.press%2Fv139%2Fmao21b.html&data=05%7C02%7Cn.cardozo%40uniandes.edu.co%7C838145bd024f4218258908ddb5e2902b%7Cfabd047cff48492a8bbb8f98b9fb9cca%7C0%7C0%7C638866706877435094%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=YX%2BVs9CdFR6dZ3P4UWUm9infvzlhvBBxOMXzJdOpJfA%3D&reserved=0
+- Abdallah and Kaisers, Addressing environment non-stationarity by repeating Q-learning updates. J. Mach. Learn. Res. 17, 1 (2016), 1582–1612. https://nam10.safelinks.protection.outlook.com/?url=https%3A%2F%2Fdoi.org%2F10.5555%2F2946645.2946691&data=05%7C02%7Cn.cardozo%40uniandes.edu.co%7C838145bd024f4218258908ddb5e2902b%7Cfabd047cff48492a8bbb8f98b9fb9cca%7C0%7C0%7C638866706877450289%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=KVJ6MUvPGtloflCAxbEs8xRS0jOoaO8lziVqEWgA%2BhA%3D&reserved=0
+
+Regarding the scale of the tested scenario, it is relatively small, as the authors consider only two crossing lanes. Consequently, it remains unclear how the proposed approach would scale to larger cases.
+
+Ref. [18] should be updated to https://nam10.safelinks.protection.outlook.com/?url=https%3A%2F%2Fdoi.org%2F10.1016%2Fj.infsof.2022.106934&data=05%7C02%7Cn.cardozo%40uniandes.edu.co%7C838145bd024f4218258908ddb5e2902b%7Cfabd047cff48492a8bbb8f98b9fb9cca%7C0%7C0%7C638866706877465605%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=7zKiJiaeMAAxEFsTM7qYjozYf3aORTVvqhi1NoHK1UM%3D&reserved=0
