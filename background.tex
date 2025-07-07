@@ -23,12 +23,12 @@ While effective in stationary settings, standard Q-learning struggles when $R_t$
 
 %%%%
 \subsection{Motivating Example}
-
+\label{sec:motivation}
 We demonstrate our approach using a $9\times 9$ Gridworld where agents navigate from the center to a goal state (reward $+100$) while avoiding negative rewards ($-1$). The environment presents two adaptation challenges:
-
-\textbf{Goal Relocation:} The target switches between corners, requiring agents to adapt to new reward distributions without losing previously learned knowledge.
-
-\textbf{Action Space Expansion:} New actions (e.g., jumping over obstacles) are introduced, requiring agents to integrate new capabilities into existing policies while maintaining performance.
+\begin{itemize}
+    \item Goal Relocation: The target switches between corners, requiring agents to adapt to new reward distributions without losing previously learned knowledge.
+    \item Action Space Expansion: New actions (e.g., jumping over obstacles) are introduced, requiring agents to integrate new capabilities into existing policies while maintaining performance.
+\end{itemize}
 
 For the traffic signal control scenario, agents must adapt to changing traffic patterns and incorporate new actions like adjusting signal timings or phases. These scenarios reflect real-world applications like robotic systems adapting to changing objectives or acquiring new capabilities through modular components.
 

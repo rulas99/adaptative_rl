@@ -1,64 +1,26 @@
-% $Id: conclusion.tex 
+% $Id: related.tex 
 % !TEX root = main.tex
 
 %%
 \section{Related Work}
 \label{sec:related}
 
-\ac{RL} inherently deals with the critical trade-off between exploration and exploitation, which 
-significantly influences the performance of the learned policy. An agent must explore sufficiently to 
-avoid settling for suboptimal solutions, yet excessive exploration can lead to inefficient training. 
-Hence, determining an optimal balance between these two strategies is crucial for achieving 
-high-quality solutions~\cite{sutton18}.
+The challenge of learning in non-stationary environments is a significant area of research in \ac{RL}. A central issue is balancing the exploration-exploitation trade-off, where an agent must explore to adapt to changes while exploiting its knowledge to maximize rewards~\cite{sutton18}. Our work, \adaptiverl, builds upon several established lines of research that address this challenge. A comprehensive overview of algorithms for dynamically varying environments can be found in the survey by \citet{Padakandla_2021}.
 
-Many adaptive strategies have been proposed to manage this balance dynamically.~\citet{tokic2010} 
-and~\citet{mignon2017adaptive} introduce adaptive implementations of the classic 
-$\varepsilon$-greedy policy, highlighting the effectiveness of dynamically adjusting $\varepsilon$ values 
-rather than maintaining them statically.~\citet{mignon2017adaptive} demonstrate how an adaptive 
-approach enhances performance in both stationary and non-stationary environments by employing 
-the PH-test for detecting environmental concept drifts.
+\subsection{Adapting to Environmental Changes}
 
-Building on the exploration-exploitation dilemma, \citet{norman2024firstexploreexploitmetalearningsolve} 
-propose First-Explore, a meta-\ac{RL} approach utilizing distinct policies dedicated to exploration 
-and exploitation. Unlike conventional methods that directly optimize cumulative rewards, First-Explore 
-trains these two separate policies and later combines them to form an inference policy that strategically 
-explores initially for $k$ episodes, sacrificing immediate rewards for greater cumulative future gains. 
-This strategy specifically addresses the limitations faced by existing methods that tend to prematurely 
-converge to suboptimal solutions due to inadequate early exploration.
+A common strategy for non-stationary environments is to adapt the agent's learning hyperparameters in response to change. Several works have focused on dynamically adjusting the exploration rate, $\varepsilon$. For example,~\citet{tokic2010} and~\citet{mignon2017adaptive} proposed adaptive implementations of the $\varepsilon$-greedy policy. A key idea in this area is to use a change-point detector to trigger the adaptation. Both~\citet{mignon2017adaptive} and~\citet{changingpointdetection} demonstrated the use of the Page-Hinkley (PH) test to detect environmental drifts and subsequently adjust the exploration strategy, showing enhanced performance over static approaches. Our work adopts this established combination of a PH-test to trigger a reset of the exploration rate.
 
-Hyperparameter optimization, particularly the learning rate, also plays a crucial role in training 
-effective \ac{RL} models. A well-known example is the Adam 
-optimizer~\cite{kingma2017adammethodstochasticoptimization}, which dynamically adjusts the learning 
-rate based on past gradient information to facilitate more efficient training convergence. Extending 
-this line of research, \citet{dynamicrlalpha} propose a dynamic learning rate approach tailored for deep 
-\ac{RL} scenarios. Their method adaptively selects optimal learning rates at different training stages, 
-demonstrating substantial performance improvements by considering the non-stationarity inherent to 
-\ac{RL} tasks.
+Beyond exploration, other model-free approaches have been proposed. \citet{nonstationaryqlearning} introduced Repeated Update Q-learning (RUQL), an algorithm that addresses the policy-bias of Q-learning (where the update frequency depends on the action selection probability) by repeating updates for less-frequently chosen actions. This contrasts with our method, which adapts the learning rate $\alpha^*$ based on the magnitude of the TD-error rather than the policy distribution. \citet{pmlr-v139-mao21b} proposed RestartQ-UCB, which periodically resets the agent's memory based on a pre-calculated schedule to handle non-stationarity. This represents a proactive strategy, whereas \adaptiverl is reactive, using the online PH-test to trigger adaptation only when a significant change in performance is detected.
 
-Transfer learning strategies, like the Transferred Q-Learning~\cite{chen2022transferredqlearning}, 
-have demonstrated improvements in convergence rates. By reusing previous knowledge from similar 
-tasks, showing that these methods effectively accelerate the learning process.
+Another relevant line of work involves context-based methods. For instance, \citet{Padakandla_2020} proposed Context Q-learning, which detects changes and maintains a separate Q-table for each environmental context. This explicitly isolates knowledge for different environment models but at the cost of increased memory. \adaptiverl follows a different design philosophy: it maintains a single Q-table and adapts in-place. Knowledge is preserved not by storing separate models, but by preventing the Q-values from being erased or directly override it and by dynamically scaling the learning rate to control the integration of new experiences, aiming for a more lightweight solution.
 
-The methods mentioned above—focused on the adaptivity of hyperparameters and the reuse of prior knowledge—closely align with the concept of \ac{CRL}~\cite{khetarpal2022continualreinforcementlearningreview}.
-\citet{abel2023definitioncontinualreinforcementlearning} define \ac{CRL} as a setting in which “the best agents never stop learning,” contrasting this with traditional \ac{RL}, which typically treats learning as the identification of a static solution rather than a process of continuous adaptation.
-Recent work has begun to explore \ac{CRL} specifically through the lens of Q-learning.
-\citet{Bagus2022} provide a systematic empirical studies of Continual Q-learning, using a decomposition of the original task into overlapping but non-contradictory sub-tasks to evaluate the effectiveness of continual learning mechanisms.
-Another approach for Continual Q-Learning comes from \citet{araujo2020controladaptiveqlearning}, who propose Adaptive Q-Learning (AQL) and its single-partition variants SPAQL and SPAQL-TS. These algorithms dynamically refine state–action partitions during training and demonstrate strong sample efficiency in continuous control problems such as CartPole, without relying on fixed descretization.
+\subsection{Continual Learning and Self-Adaptive Systems}
+The methods mentioned above—focused on adapting hyperparameters and reusing knowledge—closely align with the principles of Continual Reinforcement Learning (\ac{CRL})~\cite{khetarpal2022continualreinforcementlearningreview}. \citet{abel2023definitioncontinualreinforcementlearning} define \ac{CRL} as a setting where ``the best agents never stop learning'', which is the core challenge in non-stationary environments. Recent work has explored \ac{CRL} through the lens of Q-learning. \citet{Bagus2022} provide systematic empirical studies of continual learning methods for Q-learning, highlighting that many CL approaches are designed for non-contradictory sub-tasks and struggle in realistic RL scenarios where the same state-action pair can yield different rewards after an environmental shift. This is a challenge that \adaptiverl addresses by not resetting the Q-table and instead forcing re-exploration. This mechanism is inherently robust to such contradictory information; when a drift occurs, the outdated Q-value for a given state-action pair generates a large Temporal Difference (TD) error upon encountering the new reward, which in turn drives a high learning rate and allows the new experience to rapidly and effectively overwrite the obsolete knowledge.
 
-Various studies have shown \ac{RL} as a potent tool for self-adaptive systems in real-world 
-applications~\cite{HENRICHS2022106940}. Notable examples of \ac{RL} implementations 
-include the use of adaptive $\varepsilon$-greedy policies to dynamically adjust exploration-exploitation 
-trade-offs for \ac{IOT} security in edge computing~\cite{iotdynamicrl}, the integration of \ac{RL} 
-with active learning and concept drift detection mechanisms (like PH-Test) for network monitoring to 
-effectively identify potential threats~\cite{networkdynamicrl}, or the use of \ac{RL} macro actions to 
-continuously learn adaptation strategies~\cite{cardozo23}.
+\ac{RL} has also been shown to be a potent tool for building self-adaptive systems~\cite{HENRICHS2022106940}. Notable examples include using adaptive $\varepsilon$-greedy policies for \ac{IOT} security~\cite{iotdynamicrl}, integrating \ac{RL} with drift detection for network monitoring~\cite{networkdynamicrl}. Our traffic-control scenario is a canonical example in this domain, where an autonomous agent must continually adapt its control policy.
 
-Our approach unifies and extends three key research directions identified in the state of the art: 
-\begin{enumerate*}[label=(\arabic*)] 
-\item decoupling exploration and exploitation through specialized policies; 
-\item online adaptation of hyperparameters based on performance feedback; and 
-\item proactive environment monitoring and concept drift detection to trigger adaptive responses. 
-\end{enumerate*}
-Uniquely, \adaptiverl integrates these mechanisms within a \ac{CRL} framework that responds to detected drifts and action-space expansions, resetting exploration and updating hyperparameters only when necessary. This coordinated strategy enables continual adaptation without excessive retraining. Furthermore, addressing challenges such as those highlighted by \citet{Bagus2022}, our method mitigates catastrophic forgetting by preserving and reusing prior policy knowledge across evolving configurations, ensuring accelerated convergence even in the presence of overlapping contradictory subtasks.  
+\subsection{Positioning of Our Contribution}
+The main contribution of this paper is not a single, novel algorithmic component, but rather the synthesis and integration of several established techniques into a unified, model-free framework for tabular Q-learning. \adaptiverl combines proactive environment monitoring via the PH-test with reactive adaptation of both the exploration rate ($\varepsilon^*$) and the learning rate ($\alpha^*$). This coordinated strategy is specifically designed to enable an agent to adapt to two distinct types of non-stationarity simultaneously: changes in the reward function (shifting goals) and on-the-fly expansions of the action space. By preserving and building upon a single Q-table, our approach provides a lightweight solution aimed at mitigating catastrophic forgetting and ensuring continual adaptation in dynamic environments, without the need for full retraining or maintaining multiple explicit context models.
 
 \endinput
