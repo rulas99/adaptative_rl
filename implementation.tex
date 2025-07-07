@@ -1,134 +1,115 @@
-% $Id: conclusion.tex 
+% $Id: implementation.tex 
 % !TEX root = main.tex
 
 %%
 \section{\ac{RL} Agents with Adaptive Behavior}
 \label{sec:implementation}
 
-This section introduces \adaptiverl, our proposed approach for enabling \ac{RL} agents to 
-dynamically adapt their behavior in response to evolving environmental conditions, specifically 
-changes in the goal state and available agent actions. Our method enables agents to 
-pursue shifting objectives throughout their operational lifespan and acquire new capabilities as 
-tasks change over time. \adaptiverl is made of two main parts:
+This section introduces \adaptiverl, our proposed approach for enabling \ac{RL} agents to dynamically adapt their behavior in response to evolving environmental conditions, specifically changes in the reward structure (goals) and the available action space. \adaptiverl is designed to pursue shifting objectives and acquire new capabilities on-the-fly, without requiring complete retraining. The architecture of \adaptiverl, detailed in \fref{alg:morphin}, integrates two core components: 
 \begin{enumerate*}[label=(\arabic*)]
-\item monitoring the environment for changes,
-\item adapting agents' behavior to new goals and incorporating new actions.
+    \item a proactive monitoring and drift detection mechanism to recognize environmental changes, and
+    \item an adaptive learning process that modifies the agent's behavior to incorporate new knowledge while preserving prior experience.
 \end{enumerate*}
 The implementation of our work is publicly available.\footnote{Available at: \url{https://anonymous.4open.science/r/morphin_rl}}
 
-The conceptual foundation of \adaptiverl aligns with the ideas proposed 
-by~\citet{abel2023definitioncontinualreinforcementlearning} for \ac{CRL}, emphasizing continual 
-adaptation rather than convergence to a fixed solution. We extend tabular Q-learning by integrating 
-adaptive mechanisms that enable agents to dynamically adjust their learning strategies in response 
-to detected environmental changes. Similar to the approach described 
-by~\citet{norman2024firstexploreexploitmetalearningsolve}, every time a change is detected, be that 
-a significant change in the rewards or the introduction of new actions, our agent thoroughly explores 
-the environment while retaining information of previously learned policies. The exploration process 
-continues until a new policy stabilizes, to then exploit the acquired knowledge. Applying such 
-strategy agents can rapidly convergence to new environment configurations, without entirely 
-discarding previously learned knowledge.
+The conceptual foundation of \adaptiverl aligns with the principles of \ac{CRL}~\cite{abel2023definitioncontinualreinforcementlearning}, which emphasizes continual adaptation over convergence to a static policy. We extend tabular Q-learning by integrating a set of coordinated adaptive mechanisms that allow the agent to dynamically adjust its learning strategy. This approach enables rapid convergence in new environmental configurations by building upon, rather than discarding, previously learned knowledge. By continuously monitoring and responding to environmental changes, agents can autonomously modify their learning process at runtime, a capability that positions our approach within the class of self-adaptive systems (SAS)~\cite{WONG2022106934} and ensures resilience in non-stationary contexts.
 
-To enable agents to adapt their behavior to new conditions, we introduce an adaptive mechanisms 
-that adjust the agent's learning rate (\lrate{\alpha}) and exploration rate ($\varepsilon$) in conjunction 
-with a concept drift detection strategy. By continuously monitoring and responding to changes in the 
-environment, agents can autonomously modify their learning process at run time, enabling them 
-to learn new behavior to attain their goals, even if these change. This capability positions our 
-approach within the class of self-adaptive systems (SAS)~\cite{sasreview}, ensuring continual 
-adaptation and resilience in non-stationary contexts.
+\begin{algorithm}[hbt!]
+\caption{\adaptiverl: Adaptive Q-Learning with Concept Drift Detection}
+\label{alg:morphin}
+\begin{algorithmic}[1]
+\State \textbf{Initialize} parameters:
+\State \quad Base learning rate $\alpha$, max learning rate $\alpha_{\max}$, discount factor $\gamma$
+\State \quad TD-error sensitivity $k$, exploration decay parameters $\varepsilon_{\min}, \text{decay\_rate}$
+\State \quad Page-Hinkley parameters: sensitivity $\delta$, threshold $H$
+\State \textbf{Initialize} Q-table $Q(s, a) \leftarrow 0$ for all $s \in S, a \in A$
+\State \textbf{Initialize} drift detector $PH\_Test(\delta, H)$
+\State \textbf{Initialize} exploration decay counter $e \leftarrow 0$
+
+\For{episode = 1 to N}
+    \State Reset state $s_t \leftarrow s_{\text{initial}}$
+    \State Reset cumulative episode reward $R_{ep} \leftarrow 0$
+    
+    \While{$s_t$ is not terminal}
+        \State \Comment{Dynamically adjust exploration rate}
+        \State $\varepsilon_t \leftarrow \varepsilon_{\min} + (1 - \varepsilon_{\min}) \cdot \exp(-\text{decay\_rate} \cdot e)$
+        \State $a_t \leftarrow \text{choose\_action}(s_t, \varepsilon_t)$ \Comment{$\varepsilon$-greedy selection}
+        \State Execute $a_t$, observe reward $r_{t+1}$ and next state $s_{t+1}$
+        \State $R_{ep} \leftarrow R_{ep} + r_{t+1}$
+        
+        \State \Comment{Adaptively update Q-value (see \fref{eq:td_error} \& \fref{eq:dynamic_learning_rate})}
+        \State $TD_{error} \leftarrow r_{t+1} + \gamma \cdot \max_{a'} Q(s_{t+1}, a') - Q(s_t, a_t)$
+        \State $\text{activation} \leftarrow \frac{1}{1 + \exp(-(|TD_{error}| - k))}$
+        \State $\alpha^* \leftarrow \alpha + (\alpha_{\max} - \alpha) \cdot \text{activation}$ \Comment{Dynamic learning rate}
+        
+        \State $Q(s_t, a_t) \leftarrow Q(s_t, a_t) + \alpha^* \cdot TD_{error}$
+        
+        \State $s_t \leftarrow s_{t+1}$
+    \EndWhile
+    
+    \State \Comment{Detect Concept Drift at the end of the episode}
+    \If{$PH\_Test.update(R_{ep})$ is True}
+        \State \Comment{Drift detected: reset exploration schedule}
+        \State $e \leftarrow 0$
+        \State $PH\_Test.reset()$
+    \Else
+        \State \Comment{Stable environment: continue exploration decay}
+        \State $e \leftarrow e + 1$
+    \EndIf
+\EndFor
+\end{algorithmic}
+\end{algorithm}
 
 %%%%
-\subsection{Environment monitoring and drift detection}
+\subsection{Environment Monitoring and Drift Detection}
 
-The first step for agents to adapt their behavior to an evolving environment is to continuously monitor 
-the environment. \ac{RL} environment monitoring is intrinsic through the interaction with the 
-environment, as agents continuously observed rewards after each action execution. To detect 
-changes in the environment, \ie drift, we implement the Page-Hinkley Test (PH-test)~\cite{mignon2017adaptive,networkdynamicrl}. The PH-test calculates the cumulative difference between observed rewards and the running mean reward, incorporating a sensitivity parameter ($\delta$). A concept drift (environmental change) is flagged when the cumulative 
-difference surpasses a predefined threshold. Selecting an appropriate threshold value is crucial, as it 
-determines the sensitivity of drift detection. Higher thresholds result in more conservative detection, 
-while lower thresholds increase sensitivity to changes, this value must be selected based on the 
-magnitude order of rewards and posible changes over them.
+The first step for an agent to adapt is to recognize that the environment has changed. In \adaptiverl, this is achieved by continuously monitoring the stream of rewards obtained by the agent. We employ the Page-Hinkley Test (PH-test)~\cite{mignon2017adaptive,networkdynamicrl,changingpointdetection}, a standard change-point detection algorithm, to identify concept drifts. The PH-test operates on the cumulative reward ($R_{ep}$) received at the end of each episode, calculating the cumulative difference between this value and the running mean of episode rewards. A drift is flagged when this cumulative difference exceeds a predefined threshold, $H$.
 
-Building on the concept of drift detection, and following the ideas of~\citet{mignon2017adaptive}, 
-we adaptively increase the exploration rate ($\varepsilon$) whenever the PH-test detects a concept 
-drift. This approach promotes exploration immediately following environmental changes, enabling 
-the agent to acquire new knowledge by temporarily adopting an exploration-focused policy. To 
-ensure adequate exploration, the agent maintains an elevated exploration rate until rewards 
-stabilize (\ie the cumulative difference is below the threshold, and  no further drifts are detected). 
-Once stable, the exploration rate $\varepsilon$ uses a decay policy, leading the agent to exploit its 
-behavior.
-
-This adaptive drift detection mechanism ensures the agent maintains an effective balance between 
-exploring new environment dynamics and leveraging previously acquired knowledge. It is crucial to 
-ensure a high exploration rate after concept drift is detected consistently, so the agent can learn a 
-new policy (\ie behavior) without forgetting previously acquired knowledge. \fref{fig:dynamic-eps}, 
-shows the behavior of the dynamic exploration rate ($\varepsilon^*$) in our non-stationary Gridworld 
-running example.
+The sensitivity of the detection mechanism is controlled by two hyperparameters: $\delta$, which prevents the test from flagging minor, random fluctuations, and the threshold $H$. The selection of these values is critical and must be empirically tuned based on the magnitude and expected variance of rewards in a given domain. As detailed in \fref{alg:morphin} (lines 24-30), upon detecting a drift, \adaptiverl triggers an adaptive response by resetting its exploration schedule. Specifically, the exploration decay counter, $e$, is reset to zero. This immediately forces the exploration rate, $\varepsilon$, to its maximum value, compelling the agent to thoroughly re-explore the environment to learn the new dynamics.
 
 \begin{figure*}[hptb]
     \centering
-    \includegraphics[width=\textwidth]{figures/eps}
-    \caption{\adaptiverl's adaptive behavior of the dynamic exploration rate ($\varepsilon^*$) in Non-Stationary Gridworld experiments. Observe how $\varepsilon^*$ increases whenever a concept drift is detected by the PH-test and remains elevated until the agent consistently achieves the expected rewards (i.e., no further drift and stable rewards). Once stability is reached, $\varepsilon^*$ decays toward its minimum value, allowing the agent to exploit the acquired knowledge.}
-    \label{fig:dynamic-eps}
+    \includegraphics[width=\textwidth]{figures/eps_alph}
+    \caption{\adaptiverl's adaptive behavior of $\varepsilon^*$ and $\alpha^*$ under concept drift in a non-stationary 9×9 gridworld. After each 300-episode interval the reward targets at $(0,0)$ and $(8,8)$ are swapped—detected by a PH-test on the episode return—and marked by vertical red dashed lines at the corresponding cumulative step counts. Upon drift detection, the PH-test triggers a reset of the internal counter $e$, causing the exploration rate $\varepsilon^*$ (purple) to jump back to its maximum and then exponentially decay ($\text{decay\_rate}=0.05$) until the next change. Simultaneously, the learning rate $\alpha^*$ (green), computed via a sigmoid of the squared TD-error and bounded by $\alpha_{\max}=0.99$, rises sharply whenever the TD-error surges after a drift—mirroring the spikes in $\varepsilon^*$—and then diminishes as the policy stabilizes. Each gray dashed line traces the per-step Q-value update, while colored scatter points show the realized Q-values: **gold** for steps taken under exploration ($\varepsilon^*\ge0.2$) and **blue** for exploitation ($\varepsilon^*<0.2$). Note how, in stationary stretches, the blue points cluster at the highest Q-values, indicating convergence; conversely, during high uncertainty post-drift, $\varepsilon^*$ remains elevated and $\alpha^*$ peaks, enabling rapid re-learning until stability—and thus exploitation—resumes.}
+    \label{fig:dynamic-eps_alph}
 \end{figure*}
 
 %%%%
-\subsection{Adaptation to Changing Goals and new Actions}
+\subsection{Adaptation to Changing Goals and New Actions}
 \label{sec:morphin-adaptation}
 
-The key to enable agents is to, on the one hand, keeping knowledge gained under previous 
-environment conditions, and to dynamically adjusting the learning rate (\lrate{\alpha}) in response 
-to detected drift. The learning rate is modified dynamically using the Temporal Difference (TD) error 
-defined in \fref{eq:td_error}.
+Once a drift is detected, \adaptiverl employs a two-pronged strategy to adapt. The first prong is the aforementioned reset of the exploration rate $\varepsilon^*$. The second is a dynamic adjustment of the learning rate $\alpha^*$ to control the speed of knowledge acquisition. This dual mechanism allows the agent to respond effectively to changes in both environmental goals (reward function) and available capabilities (action space).
 
+A cornerstone of \adaptiverl is the preservation of prior knowledge to mitigate catastrophic forgetting. Unlike approaches that retrain from scratch, \adaptiverl never resets the Q-table. Existing Q-values serve as an informed starting point for learning the new policy. This knowledge reuse is what allows the agent to adapt more quickly after subsequent, potentially familiar, environmental changes, as illustrated by the shorter re-learning periods in \fref{fig:dynamic-eps_alph}.
+
+The adaptation of the learning rate is driven by the Temporal Difference (TD) error, which measures the discrepancy in the agent's predictions. The causal link is as follows: a concept drift triggers heightened exploration (high $\varepsilon^*$), which in turn leads to actions that produce large TD-errors as the agent encounters the new, unexpected environmental dynamics. \adaptiverl harnesses this signal to modulate the learning rate.
+
+The TD-error is defined as:
 \begin{equation} \label{eq:td_error}
     TD_{error} = r_{t+1} + \gamma \cdot \underset{a}{\max} Q(s_{t+1}, a) - Q(s_t, a_t)
 \end{equation}
-
-The TD error quantifies the difference between the agent's predicted reward and the actual reward 
-received. The dynamic learning rate (\lrate{\alpha^*}) is then adjusted based on the TD error 
-following \fref{eq:dynamic_learning_rate}.
+This error quantifies the difference between the agent's predicted Q-value (the expected long-term discounted reward) and the updated estimate based on the observed reward and the value of the next state. The dynamic learning rate, $\alpha^*$, is then computed as a function of this error:
 
 \begin{equation}
     \label{eq:dynamic_learning_rate}
     \alpha^* = \alpha + (\alpha_{\max}-\alpha) \cdot \frac{1}{1 + e^{-(|TD_{error}|-k)}}
 \end{equation}
 
-In the equation, \lrate{\alpha} corresponds to the base learning rate (e.g., 0.1), and $\alpha_{\max}$ 
-is the upper bound of the learning rate (\eg 0.9 specified during the creation of the agent). This 
-method introduces a new learning parameter $k$, which controls the sensitivity of the learning rate to 
-the TD error, with higher values resulting in reduced sensitivity. Parameter $k$ must be carefully (and 
-empirically) tuned according to the specific characteristics of the environment and learning context. 
-High TD errors induce a larger learning rate, enabling faster updates during exploration, whereas 
-lower TD errors yield a more stable and conservative learning process during exploitation phases. 
-\fref{fig:alpha} illustrates the behavior of the dynamic learning rate (\lrate{\alpha^*}). In the figure it 
-is possible to observe that the agent is able to detect the concept drift and enable exploration short 
-after the drift occurs. Moreover, after the second concept drift, the exploration period of the agent 
-shortens. This is due fact that agents do not loose their knowledge after a concept drift is detected. 
-As a consequence, agents take more informed decisions after every episode, leading to higher 
-rewards. 
+Here, $\alpha$ is the base learning rate, and $\alpha_{\max}$ is its upper bound. The hyperparameter $k$ controls the sensitivity of $\alpha^*$ to the TD-error, acting as the midpoint of the sigmoid activation. It determines how large the TD-error must be to trigger a substantial increase in the learning rate and must be empirically tuned to the typical scale of TD-errors within a given environment. As shown in \fref{fig:dynamic-eps_alph}, high TD-errors (following a drift) yield a large $\alpha^*$, accelerating learning. As the agent's policy stabilizes and prediction errors diminish, $\alpha^*$ decays towards its base value, ensuring stable convergence.
+
+This framework also supports the expansion of the agent's action space. When a new action, $a_{new}$, becomes available, the Q-table, which is structurally a matrix of size $|A| \times |S|$, is dynamically augmented by adding a new entry for $a_{new}$. The corresponding Q-values, $Q(s, a_{new})$ for all states $s$, are initialized to zero. This event, whether signaled directly or detected as a drift, triggers the same adaptive mechanisms: $\varepsilon^*$ is reset to encourage exploration of the new action, and $\alpha^*$ adjusts dynamically to integrate its utility into the existing policy. If both goals and actions change simultaneously, the PH-test detects this as a single concept drift, triggering a unified adaptation process to resolve both variations.
+
+\subsection{Comparative Performance in a Non-Stationary Environment}
+
+The effectiveness of \adaptiverl's adaptive mechanisms becomes evident when contrasted with a standard Q-learning agent using a static exploration schedule. \fref{fig:trad-q} illustrates the behavior of such a baseline agent in the same non-stationary Gridworld scenario. The agent's exploration rate, $\varepsilon$, decays exponentially from the start and is never reset. While this allows for convergence to the initial goal, the agent becomes unable to adapt to subsequent concept drifts. After the first drift at 300 episodes, the already low $\varepsilon$ prevents sufficient exploration of the new goal state, causing a sharp, sustained drop in performance as the agent remains committed to its obsolete policy.
+
+This contrasts sharply with the behavior of \adaptiverl, shown in \fref{fig:dynamic-eps_alph}. By explicitly detecting environmental changes and resetting the exploration schedule, \adaptiverl forces the agent to re-evaluate its policy. The coordinated increase in both exploration ($\varepsilon^*$) and learning speed ($\alpha^*$) enables it to rapidly converge to the new optimal policy after each drift. While our approach is based on the integration of established techniques—namely, the PH-test and dynamic hyperparameter adaptation—its primary contribution lies in unifying these components into a coherent framework for tabular \ac{RL} that effectively handles non-stationarity in both rewards and action spaces.
 
 \begin{figure*}[hptb]
     \centering
-    \includegraphics[width=\textwidth]{figures/alpha}
-    \caption{\adaptiverl's adaptive behavior of the dynamic learning rate ($\alpha^*$) in Non-Stationary Gridworld experiments. Notice how $\alpha^*$ increases during exploration phases (when the TD error is high) and decreases during exploitation phases (when the TD error is low), enabling rapid convergence during exploration and stable learning during exploitation.}
-    \label{fig:alpha}
+    \includegraphics[width=\textwidth]{figures/trad_eps}
+    \caption{Static $\varepsilon$-decay and Q-value dynamics under concept drift in a non-stationary 9×9 gridworld (standard Q-learning). A single exponential $\varepsilon$-decay schedule (purple) is applied from episode 0—with no resets at drift—against four induced drifts at episodes 300, 600, 900 and 1200 (red dashed lines). After an initial burst of exploration (gold points) the agent converges its Q-values (blue points) to the first goal configuration. Upon the first drift (300--600), $\varepsilon$ has already fallen below the exploitation threshold (0.2) and remains low, so the agent lacks sufficient exploration to “unlearn” its obsolete policy: Q-values collapse but only recover very slowly. Only when the goal mapping reverts to the original (600--900 and again after 1200) does the residual Q-table allow faster re-convergence—since no new information is required—whereas truly novel drifts (300--600 and 900--1200) never reach convergence within the episode horizon.}
+    \label{fig:trad-q}
 \end{figure*}
 
-The adaptation in the case of the introduction of new actions to an agent, follows the same process 
-as the adaptation to changing goals. Agents can be given new capabilities with the introduction of 
-actions as a direct signal to the agent, in which case the dynamic adaptation process is triggered 
-instantly to enable the exploration taking into account the new action. Another possibility is that the 
-action is obtained unannounced, in which case the agent can detect the new action during the 
-monitoring, and then use the dynamic learning rate.
-
-Whichever method used, agents using the dynamic learning rate strategy, agents explore the 
-environment anew, enabling the discovery of new or improved behavior due to the acquired actions. 
-The overall performance of the agent improves or keeps the same, as the goals remain unchanged.
-
-Finally note that if both the goals change, and the agent acquires new actions simultaneously, 
-The proposed strategy can detect both situations as concept drift, and trigger the learning process 
-to effectively resolve the two variation points.
-
-
 \endinput
-

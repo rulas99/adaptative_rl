@@ -80,16 +80,16 @@ After reading the paper, some major concerns remain which I'd like to summarize 
 Further minor issues:  
 - Please add reference in the introduction for reinforcement learning
 - The formal definition of a non-stationary MDP (as sequence of MDPs over time t) as a set {MDP_t} mathematically seems to be inappropriate since it would exclude that the exact same MDP can appear twice in the sequence, right?
-- `Can rapidly convergence...' --> `can rapidly converge...'
-- `we introduce an adaptive mechanisms...' --> `mechanism'
-- `agents continuously observed' --> `observe'?
-- `posible' --> `possible'
-- `The key to enable agents, ...' --> to `enable' for what? --> Please clarify
-- `The TD error quantifies the difference between the predicted reward and the actual reward received' --> this is not perfectly true and a bit imprecise. Actually the state-action (or Q) values are predicted which represent the expected discounted cumulative (i.e., long term) reward. Please be more precise at this place.
-- `Nonetheless, the runtime efficiency the agents is actually lower' --> what is meant with runtime efficiency here exactly. I think there is also an 'of' missing.
-- In the future work section `Active Learning' is mentioned but it remains unclear for what purpose this should be explored further.
+- `Can rapidly convergence...' --> `can rapidly converge...' (TACKLED)
+- `we introduce an adaptive mechanisms...' --> `mechanism' (TACKLED)
+- `agents continuously observed' --> `observe'? (TACKLED)
+- `posible' --> `possible' (TACKLED)
+- `The key to enable agents, ...' --> to `enable' for what? --> Please clarify (TACKLED)
+- `The TD error quantifies the difference between the predicted reward and the actual reward received' --> this is not perfectly true and a bit imprecise. Actually the state-action (or Q) values are predicted which represent the expected discounted cumulative (i.e., long term) reward. Please be more precise at this place. (TACKLED)
+- `Nonetheless, the runtime efficiency the agents is actually lower' --> what is meant with runtime efficiency here exactly. I think there is also an 'of' missing. (TACKLED)
+- In the future work section `Active Learning' is mentioned but it remains unclear for what purpose this should be explored further. (TACKLED)
 - The references sections exceeds the page limit. Please shorten accordingly.
-- Consistency: learning parameters vs. hyperparameters. Authors should clearly delineate between the two concepts. Learning parameters usually refer to the weights of a parametric model such as a neural network, whereas in this work hyperparameters are adapted.
+- Consistency: learning parameters vs. hyperparameters. Authors should clearly delineate between the two concepts. Learning parameters usually refer to the weights of a parametric model such as a neural network, whereas in this work hyperparameters are adapted. (TACKLED)
 
 Based on the points of criticism as summarized above, I unfortunately cannot recommend acceptance of the contribution as a full main-track conference paper in its current state.
 

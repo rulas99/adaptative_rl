@@ -103,7 +103,7 @@ the agent to handle both contradictory and non-contradictory overlapping subtask
 goals are randomly sampled in nearby regions rather than at the exact same cell.\footnote{Animated simulations of these and other scenarios are available at: \url{https://anonymous.4open.science/r/morphin_rl/simulations/memory_stm_v4_exp.mp4}}
 
 \adaptiverl introduces a modest overhead due to the detection of concept drift and adaptive updates. 
-Nonetheless, the run-time efficiency the agents is actually lower. Using our experimental setting 
+Nonetheless, the run-time of the agents is actually lower. Using our experimental setting 
 $1,000$ runs take approximately 5 minutes for \adaptiverl, while it takes around 8 minutes to 
 complete all runs with the baseline Q-learning implementation. This efficiency gain results directly 
 from the reduced number of steps needed to reach the goal after each drift. Specifically, \adaptiverl 

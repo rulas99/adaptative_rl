@@ -4,49 +4,12 @@
 \section{Introduction}
 \label{sec:introduction}
 
-\acf{RL} is a subset of \ac{ML} in which agents learn by interacting with an environment, 
-through trial and error. An agent receives a scalar reward (positive or negative) for each interaction 
-step, based on the outcome of the action taken. The objective of the agent is to maximize its cumulative long-term 
-reward~\cite{sutton18}. Traditional \ac{RL} algorithms, such as Q-Learning, assume stationary 
-\acp{MDP}, where transition probabilities and reward functions are constant over 
-time~\cite{meta-rl-traffic}. However, this assumption restricts \ac{RL} agents' effectiveness in 
-real-world environments, which often exhibit non-stationary characteristics like evolving state 
-distributions, varying reward dynamics, and changing action 
-spaces~\cite{khetarpal2022continualreinforcementlearningreview}.
+Traditional \acf{RL} algorithms assume stationary \acp{MDP}, where transition probabilities and reward functions remain constant~\cite{sutton18}. However, real-world environments often exhibit non-stationary characteristics like evolving reward dynamics and changing action spaces~\cite{khetarpal2022continualreinforcementlearningreview}, limiting the effectiveness of standard approaches.
 
-To overcome these limitations, our work adopts a \acf{CRL} paradigm, where agents continuously 
-adapt to environmental changes~\cite{abel2023definitioncontinualreinforcementlearning}. Approaches 
-such as meta-learning~\cite{zintgraf21} and transfer learning~\cite{zhuang20} have shown promise 
-within \ac{CRL}. Meta-learning allows an agent to \emph{learn how to learn}, enhancing adaptability in 
-new contexts~\cite{beck2024surveymetareinforcementlearning}. Transfer learning leverages prior 
-knowledge to accelerate learning in related tasks~\cite{chen2022transferredqlearning}.
+This paper introduces \adaptiverl, a self-adaptive Q-learning algorithm that addresses two key challenges in non-stationary environments: (1) adapting to changing reward functions (goals), and (2) incorporating new actions into the agent's behavior. Our approach integrates concept drift detection using the Page-Hinkley test with dynamic adjustment of learning ($\alpha$) and exploration ($\varepsilon$) rates, enabling agents to preserve prior knowledge while adapting to environmental changes.
 
-This paper introduces \adaptiverl, a Q-learning-based \ac{RL} algorithm that incorporates adaptive 
-mechanisms inspired by \ac{CRL} to account for environment changes in the goal/rewards definition 
-or in the action space available to an agent. Our work is motivated by the suitability of \ac{RL} for 
-self-adaptive systems, given its capacity to dynamically adjust behavior in response to environmental 
-feedback~\cite{HENRICHS2022106940}. However, real-world scenarios such as traffic control 
-present substantial challenges due to their inherent non-stationary dynamics~\cite{meta-rl-traffic}. 
-We note, the problem of environment changes to the state space has been addressed~\cite{gueriau19}, 
-while adaptations to the goals (\ie rewards) or action space remain an open question.
+\adaptiverl operates through two main mechanisms: \emph{environment monitoring} for drift detection, and \emph{adaptive learning} that dynamically adjusts parameters based on temporal difference errors. When concept drift is detected, the agent increases exploration while maintaining its Q-table structure, allowing rapid adaptation without catastrophic forgetting. For new actions, the agent extends its Q-table dimensions and applies targeted exploration to integrate new capabilities.
 
-Our method effectively addresses non-stationary environments by continuously monitoring and 
-updating agents' learning strategy. 
-
-We validate \adaptiverl with two applications. One application in the context of \ac{RL}, using a 
-standard \ac{RL} benchmark Gridworld, and one application in the context of self-adaptive systems, 
-with a traffic signal control at city intersections. In the first scenario, environment goals are changed 
-back and forth at defined points in the execution to observe the behavior of the environment in learning 
-(or lack there of) new behavior. Additionally, we present a second independent scenario introducing 
-new actions to the agent. In the second scenario we combine the changing goals and introduction of 
-new actions to observe if the agent is effective in detecting both the new goal and action incorporating 
-them into the new learned policy. The use of signal phases continuously influence state transitions and 
-rewards~\cite{meta-rl-traffic}. By demonstrating the effectiveness of \adaptiverl under these conditions, 
-we underline its suitability for self-adaptive systems, particularly those relying on streaming data where 
-concept drift may occur, making efficient adaptation essential.
-
-%%possibly remove
-This paper is structured as follows: \fref{sec:background} introduces theoretical foundations relevant to our implementation, along with a motivating case study that illustrates the problem addressed in this work. \fref{sec:implementation} describes the \adaptiverl algorithm in detail. \fref{sec:validation} presents our validation methodology across the implemented experiments, including traffic signal control, and discusses the results. \fref{sec:related} reviews related work and situates our contribution within the current state of the art. Finally, \fref{sec:conclusion} summarizes our conclusions and outlines directions for future research.
-
+We validate our approach on Gridworld benchmarks with shifting goals and expanding action spaces, and demonstrate practical applicability in traffic signal control scenarios. Results show superior convergence speed and adaptation efficiency compared to standard Q-learning baselines, positioning \adaptiverl as a suitable approach for self-adaptive systems operating in dynamic environments.
 \endinput
 
