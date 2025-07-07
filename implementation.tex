@@ -81,3 +81,5 @@ This framework also handles an expanding action space. When a new action $a_{new
 \end{figure*}
 
 The effectiveness of \adaptiverl becomes evident when contrasted with a standard Q-learning agent (\fref{fig:trad-q}). The baseline agent's static exploration schedule prevents adaptation to new goals, causing a sustained drop in performance. In sharp contrast, \adaptiverl (\fref{fig:dynamic-eps_alph}) explicitly detects changes and coordinates exploration ($\varepsilon^*$) with learning speed ($\alpha^*$) to rapidly converge to a new optimal policy after each drift.
+
+\endinput

@@ -1,4 +1,3 @@
-
 \begin{algorithm}[hbt!]
 \caption{\adaptiverl: Adaptive Q-Learning with Concept Drift Detection}
 \label{alg:morphin}
@@ -16,23 +15,16 @@
     \State Reset cumulative episode reward $R_{ep} \leftarrow 0$
     
     \While{$s_t$ is not terminal}
-        \State \Comment{Dynamically adjust exploration rate}
         \State $\varepsilon_t \leftarrow \varepsilon_{\min} + (1 - \varepsilon_{\min}) \cdot \exp(-\text{decay\_rate} \cdot e)$
         \State $a_t \leftarrow \text{choose\_action}(s_t, \varepsilon_t)$ \Comment{$\varepsilon$-greedy selection}
-        \State Execute $a_t$, observe reward $r_{t+1}$ and next state $s_{t+1}$
+        \State Execute $a_t$, observe $r_{t+1}$ and $s_{t+1}$
         \State $R_{ep} \leftarrow R_{ep} + r_{t+1}$
-        
-        \State \Comment{Adaptively update Q-value (see \fref{eq:td_error} \& \fref{eq:dynamic_learning_rate})}
-        \State $TD_{error} \leftarrow r_{t+1} + \gamma \cdot \max_{a'} Q(s_{t+1}, a') - Q(s_t, a_t)$
-        \State $\text{activation} \leftarrow \frac{1}{1 + \exp(-(|TD_{error}| - k))}$
-        \State $\alpha^* \leftarrow \alpha + (\alpha_{\max} - \alpha) \cdot \text{activation}$ \Comment{Dynamic learning rate}
-        
+        \State\Comment{Adaptively update Q-value, see eq. \eqref{eq:td_error} \& \eqref{eq:dynamic_learning_rate}}
         \State $Q(s_t, a_t) \leftarrow Q(s_t, a_t) + \alpha^* \cdot TD_{error}$
-        
         \State $s_t \leftarrow s_{t+1}$
     \EndWhile
     
-    \State \Comment{Detect Concept Drift at the end of the episode}
+    \State\Comment{Detect Concept Drift at the end of the episode}
     \If{$PH\_Test.update(R_{ep})$ is True}
         \State \Comment{Drift detected: reset exploration schedule}
         \State $e \leftarrow 0$
@@ -44,4 +36,3 @@
 \EndFor
 \end{algorithmic}
 \end{algorithm}
-
