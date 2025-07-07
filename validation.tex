@@ -5,104 +5,54 @@
 \section{Validation}
 \label{sec:validation}
 
-To evaluate the effectiveness of \adaptiverl, we conduct experiments in two distinct scenarios. First, we use the canonical Gridworld benchmark to provide a clear proof-of-concept and a running example of the agent's internal mechanisms. Second, we use a more complex traffic-signal control simulation to validate the agent's adaptability in a scenario representative of real-world self-adaptive systems.
+We evaluate \adaptiverl in two scenarios: a canonical Gridworld benchmark for a clear proof-of-concept, and a more real application over traffic-signal control simulation to validate its adaptability in a scenario representative of real-world self-adaptive systems.
 
-%%%%
 \subsection{Evaluation Scenarios}
+Gridworld: In a $9 \times 9$ grid, we run two experiments for 1,000 independent trials each. First, in a 1,500-episode run, the high-reward goal state is swapped between opposite corners every 300 episodes. Second, in a 400-episode run, a new ``jump'' action is introduced at episode 300, requiring the agent to find a more optimal path.
 
-%%%%%%
-\subsubsection{Gridworld}
-The Gridworld environment is a $9 \times 9$ grid, as described in \fref{sec:motivation}. We evaluate \adaptiverl under two distinct conditions within this environment, executing 1,000 independent runs for each to ensure statistical significance.
-\begin{itemize}
-    \item Changing Goals: The agent is run for 1,500 episodes. Every 300 episodes, the high-reward goal state is swapped between two diagonally opposite corners. The agent must detect this change and adapt its policy to the new goal.
-    \item Expanding Action Space: In a separate experiment of 400 episodes, the agent is given a new action---the ability to ``jump'' over walls---at episode 300. The agent must incorporate this new action to find a more optimal path.
-\end{itemize}
+Traffic-Signal Control: We model a two-lane intersection using a custom Gym environment~\cite{gymlib}, a canonical application for SAS~\cite{HENRICHS2022106940}. The state $s_t = (c_1, c_2)$ is the number of queued vehicles per lane. Actions are signal phases with different service capacities. The reward function penalizes both congestion (queues exceeding a threshold) and inefficiency (allocating green time to empty lanes). Concept drift is induced by changing vehicle arrival rates ($\lambda_1, \lambda_2$) at predefined episodes. Upon drift detection, the action space is expanded with more aggressive signal phases to manage heavier traffic.
 
-%%%%%%
-\subsubsection{Traffic-Signal Control}
-Intelligent traffic management is a canonical application of self-adaptive systems~\cite{HENRICHS2022106940}, where non-stationarity is a primary challenge~\cite{meta-rl-traffic}. We model a two-lane intersection using a custom environment, \texttt{TrafficEnv}, which extends OpenAI's Gym library~\cite{gymlib}.
-
-The environment's Markov Decision Process (MDP) is defined as follows:
-\begin{itemize}
-    \item State ($S$): The state $s_t = (c_1, c_2)$ represents the number of queued vehicles in lane C1 (vertical) and C2 (horizontal), respectively. Queue lengths are bounded in the interval $[0, \mathit{max\_state}]$.
-    \item Actions ($A$): An action corresponds to selecting a signal phase, defined by a tuple of service capacities (vehicles cleared per step). Initially, the agent has three actions: $\{(5,2), (2,5), (3,3)\}$.
-    \item Transition Function ($P$): At each step, a sequence of events unfolds: 1) Service is applied to lane C1, reducing its queue. 2) New vehicles arrive at lane C2, governed by a Poisson distribution with rate $\lambda_2$. 3) Service is applied to lane C2. 4) New vehicles arrive at lane C1, governed by a Poisson distribution with rate $\lambda_1$.
-    \item Reward Function ($R$): The reward function is designed to penalize both congestion and inefficient service. It is defined as $R_t = r_t - \text{penalty}_t$. The congestion cost, $r_t$, prioritizes the more congested lane:
-    \[
-    r_t = 
-    \begin{cases}
-    -(2c_1 + c_2)\quad &\text{if } c_1 > 7 \land c_1 > c_2,\\
-    -(c_1 + 2c_2)\quad &\text{if } c_2 > 7 \land c_2 > c_1,\\
-    -(c_1 + c_2)\quad &\text{otherwise}
-    \end{cases}
-    \]
-    The service penalty, $\text{penalty}_t = 3 \times (\text{waste}_{C1} + \text{waste}_{C2})$, discourages allocating excessive green time to lanes with few vehicles.
-\end{itemize}
-
-Concept drift is induced by changing the vehicle arrival rates ($\lambda_1, \lambda_2$) at predefined episodes. When a drift is detected, the agent's action space is expanded with two new, more aggressive signal phases, $(7,3)$ and $(3,7)$, to provide finer control under heavy congestion. Existing actions are retained. The variations in $\lambda$ simulate realistic traffic patterns where congestion levels fluctuate due to temporal factors such as time of day, weather conditions, or special events. For instance, during morning rush hour, $\lambda_1$ might increase as the vertical corridor experiences heavy commuter traffic, while during late evening hours, $\lambda_2$ might increase as the horizontal route handles nightlife and service vehicle traffic.
-
-%%%
 \subsection{Experimental Setting}
-Experiments are run on an Intel Core i5 CPU with 64GB RAM, using Python 3.12 and Gym 0.26.2. We compare \adaptiverl against a standard Q-learning baseline.
-\begin{itemize}
-  \item \textbf{Standard Q-learning (Baseline):} Uses a fixed learning rate $\alpha=0.1$ and an exploration rate $\varepsilon$ that decays exponentially from 0.9 to 0.01 without resets.
-  \item \textbf{\adaptiverl:} Employs the PH-test to detect drifts and trigger an exploration reset ($\varepsilon \to 1$). It uses a dynamic learning rate $\alpha^*$ modulated by the TD-error, as described in \fref{sec:implementation}. The hyperparameters for the experiments (e.g., $k=5, \delta=0.5, H=300$) were determined empirically to suit the reward scale of each environment.
-\end{itemize}
+Experiments were run using Python 3.12 and Gym 0.26.2. We compare \adaptiverl against a Standard Q-learning (Baseline) agent with a fixed learning rate ($\alpha=0.1$) and a single, non-resetting exponential exploration decay. \adaptiverl uses the PH-test to trigger exploration resets ($\varepsilon \to 1$) and a dynamic learning rate $\alpha^*$ modulated by the TD-error. Hyperparameters for both scenarios (e.g., $k=5, \delta=0.5, H=300$) were determined empirically to suit the reward scale of each environment.
 
-%%%%
 \subsection{Evaluation Results}
-
-%%%%%%
-\subsubsection{Gridworld}
-In the Gridworld scenario, \adaptiverl demonstrates superior adaptation to environmental changes compared to the baseline. \fref{fig:q-value-comp} shows the Q-value heatmaps after 1,500 episodes of goal switching. The \adaptiverl agent (left) retains high Q-values for both the current goal location and previously learned goal locations. This preservation of knowledge prevents catastrophic forgetting. In contrast, the standard Q-learning agent (right) overwrites its Q-values with each goal change, effectively forgetting the path to previous goals.
-
-\begin{figure*}[hptb]
-    \centering
-    \includegraphics[width=0.9\textwidth]{figures/q_map_comp.png}
-    \caption{Comparison of Q-value heatmaps after 1,500 episodes in the non-stationary Gridworld. (Left) \adaptiverl preserves high Q-values for both the initial goal (top-left) and subsequent goals, demonstrating knowledge retention. (Right) Standard Q-learning overwrites past knowledge, showing high values only for the most recent goal policy.}
-    \label{fig:q-value-comp}
-\end{figure*}
-
-This adaptability translates to significant gains in learning efficiency. As shown in \fref{tab:gridworld-table}, \adaptiverl requires substantially fewer steps to converge after a drift. It needs $1.9\times$ fewer steps after the first goal change and converges in $1.7\times$ fewer total steps over the 1,500-episode run. The baseline agent fails to re-converge within the allotted episodes after the first change, highlighting its brittleness to non-stationarity.
+Gridworld: \adaptiverl demonstrates superior adaptation and knowledge retention. \fref{fig:q-value-comp} shows that after 1,500 episodes, \adaptiverl (left) retains high Q-values for both current and previously learned goals, preventing catastrophic forgetting. The baseline (right) overwrites past knowledge, remembering only the most recent goal. This adaptability yields significant efficiency gains, as shown in \fref{tab:gridworld-table}: \adaptiverl requires up to $1.9\times$ fewer steps to converge after a drift. Furthermore, \fref{fig:q-value-comp2} shows that \adaptiverl effectively incorporates the new ``jump'' action to find a more optimal policy, while the baseline struggles to update its established policy.
 
 \begin{table}[h]
 \centering
-\caption{Average steps to convergence after change and total steps over 1,500 episodes in the Gridworld scenario (1,000 runs). Dashes (--) indicate failure to converge within the 300-episode interval.}
+\caption{Average steps to convergence and total steps over 1,500 episodes in Gridworld (1,000 runs). Dashes (--) indicate failure to converge within the 300-episode interval.}
 \label{tab:gridworld-table}
-\resizebox{\textwidth}{!}{
-\begin{tabular}{l | c | c | c | c | c }
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{l | c | c | c | c }
 \toprule
-\textbf{Agent} & \textbf{1st Change} & \textbf{2nd Change} & \textbf{3rd Change} & \textbf{4th Change} & \textbf{Total Steps} \\
+\textbf{Agent} & \textbf{1st Change} & \textbf{2nd Change} & \textbf{3rd Change} & \textbf{Total Steps} \\
 \midrule
-Q-Learning  & 256.40 $\pm$ 4.35\% & -- & -- & -- & 40,683.74 $\pm$ 1.33\% \\
-\textbf{\adaptiverl} & 135.81 $\pm$ 9.31\% & 475.17 $\pm$ 5.80\% & 767.81 $\pm$ 3.13\% & 1,069.74 $\pm$ 2.45\% & 23,292.07 $\pm$ 6.33\% \\
+Q-Learning  & 256.40 $\pm$ 4.35\% & -- & -- & 40,683.74 $\pm$ 1.33\% \\
+\textbf{\adaptiverl} & 135.81 $\pm$ 9.31\% & 475.17 $\pm$ 5.80\% & 767.81 $\pm$ 3.13\% & 23,292.07 $\pm$ 6.33\% \\
 \bottomrule
 \end{tabular}
 }
 \end{table}
 
-Furthermore, \adaptiverl effectively adapts to an expanded action space. \fref{fig:q-value-comp2} shows that when the ``jump'' action is introduced, \adaptiverl (left) successfully incorporates it to find a more optimal path (reducing steps from 14 to 4). The standard agent (right) struggles to leverage the new action in states where an old policy is already established, resulting in suboptimal performance.
+Traffic-Signal Control: In this scenario, \adaptiverl again shows robust adaptation (\fref{fig:traffic-learning-curve}). When congestion increases at episode 3,000, the PH-test detects the drift, triggering adaptation and enabling a rapid performance recovery. The baseline agent suffers a prolonged degradation. However, the results also highlight a limitation: a second drift at episode 8,000 (lowered traffic) is not detected because the new reward distribution is a subset of previously seen values and does not exceed the PH-test's sensitivity threshold. While both agents' performance improves in the easier environment, this failure underscores the challenge of parameterizing drift detectors. Despite this, the case study confirms \adaptiverl's ability to react to detected non-stationarity and seamlessly incorporate new actions to manage changing conditions.
 
 \begin{figure*}[hptb]
     \centering
-    \includegraphics[width=0.9\textwidth]{figures/q_map_comp2.png}
-    \caption{Comparison of Q-value heatmaps after 400 episodes with an expanded action space. (Left) \adaptiverl effectively learns to use the new ``jump'' actions (indicated by double arrows) to create a more optimal policy. (Right) Standard Q-learning fails to integrate the new action effectively, remaining in a suboptimal policy.}
+    \includegraphics[width=0.9\textwidth]{q_map_comp.png}
+    \caption{Q-value heatmaps after 1,500 episodes. (Left) \adaptiverl preserves knowledge, showing high Q-values for both the initial (top-left) and subsequent goals. (Right) Standard Q-learning suffers catastrophic forgetting, showing high values only for the most recent policy.}
+    \label{fig:q-value-comp}
+\end{figure*}
+
+\begin{figure*}[hptb]
+    \centering
+    \includegraphics[width=0.9\textwidth]{q_map_comp2.png}
+    \caption{Q-value heatmaps after 400 episodes with an expanded action space. (Left) \adaptiverl learns to use the new ``jump'' actions (double arrows) for a more optimal policy. (Right) Standard Q-learning fails to effectively integrate the new action.}
     \label{fig:q-value-comp2}
 \end{figure*}
 
-%%%%%%
-\subsubsection{Traffic-Signal Control}
-In the traffic-signal control scenario, \adaptiverl again demonstrates robust adaptation. \fref{fig:traffic-learning-curve} shows the cumulative mean reward for both agents over 10,000 episodes. At episode 3,000, a concept drift is induced by increasing traffic congestion. The PH-test in \adaptiverl detects this change promptly (green line), triggering an exploration reset and the introduction of new actions. Consequently, \adaptiverl's performance recovers rapidly, significantly outperforming the baseline Q-learning agent, which suffers a prolonged performance drop.
-
-However, the results also highlight a limitation of the PH-test. At episode 8,000, a second drift occurs where traffic rates are lowered. This change is not detected by \adaptiverl because the resulting reward distribution is a subset of the rewards experienced during the initial, low-congestion phase. As the new rewards are not sufficiently novel to exceed the PH-test's sensitivity threshold, no adaptation is triggered. Both agents' performance improves as the environment becomes easier, but \adaptiverl's failure to detect the change underscores the challenge of selecting robust drift detection parameters.
-
-Despite this, the case study confirms that \adaptiverl can effectively: react to detected non-stationary conditions, seamlessly incorporate new actions (signal phases) to manage new conditions, and leverage a dynamic reward function to promote resource-efficient policies. This enables a form of continuous, automated adjustment to traffic patterns that is impractical with manual retuning.
-
 \begin{figure*}[hptb]
     \centering
-    \includegraphics[width=0.9\textwidth]{figures/traffic_learning_curve.png}
-    \caption{Learning performance for traffic-signal control under non-stationary congestion. After the first drift (episode 3,000), \adaptiverl detects the change and rapidly recovers performance by leveraging an expanded action set. Traditional Q-learning suffers a severe and prolonged performance degradation. The second drift (episode 8,000) is not detected by the PH-test.}
+    \includegraphics[width=0.9\textwidth]{traffic_learning_curve.png}
+    \caption{Learning performance in the traffic scenario. After the first drift (episode 3,000), \adaptiverl detects the change (green line) and rapidly recovers. Traditional Q-learning suffers prolonged degradation. The second drift (episode 8,000) is not detected by the PH-test.}
     \label{fig:traffic-learning-curve}
 \end{figure*}
-
-\endinput
