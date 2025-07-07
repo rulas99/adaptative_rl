@@ -1,49 +1,44 @@
-\documentclass{article}
-\usepackage{algorithm}
-\usepackage{algpseudocode}
-\usepackage{amsmath}
 
-
-\begin{algorithm}
-\caption{MORPHIN: Q-learning Adaptativo con Detección de Deriva}
+\begin{algorithm}[hbt!]
+\caption{\adaptiverl: Adaptive Q-Learning with Concept Drift Detection}
 \label{alg:morphin}
 \begin{algorithmic}[1]
-\State \textbf{Inicializar} parámetros:
-\State \quad Tasa de aprendizaje base $\alpha$, máxima $\alpha_{max}$, factor de descuento $\gamma$
-\State \quad Umbral de TD-error $k$, parámetros de decaimiento de $\epsilon$
-\State \quad Parámetros de Page-Hinkley: $\delta$, umbral $H$
-\State \textbf{Inicializar} Q-table $Q(s, a) \leftarrow 0$ para todos los $s, a$
-\State \textbf{Inicializar} detector de deriva $PH\_Test(\delta, H)$
-\State \textbf{Inicializar} contador de decaimiento de exploración $e \leftarrow 0$
+\State \textbf{Initialize} parameters:
+\State \quad Base learning rate $\alpha$, max learning rate $\alpha_{\max}$, discount factor $\gamma$
+\State \quad TD-error sensitivity $k$, exploration decay parameters $\varepsilon_{\min}, \text{decay\_rate}$
+\State \quad Page-Hinkley parameters: sensitivity $\delta$, threshold $H$
+\State \textbf{Initialize} Q-table $Q(s, a) \leftarrow 0$ for all $s \in S, a \in A$
+\State \textbf{Initialize} drift detector $PH\_Test(\delta, H)$
+\State \textbf{Initialize} exploration decay counter $e \leftarrow 0$
 
-\For{episodio = 1 to N}
-    \State Reiniciar estado $s_t \leftarrow s_{inicial}$
-    \State Reiniciar recompensa acumulada del episodio $R_{ep} \leftarrow 0$
+\For{episode = 1 to N}
+    \State Reset state $s_t \leftarrow s_{\text{initial}}$
+    \State Reset cumulative episode reward $R_{ep} \leftarrow 0$
     
-    \While{$s_t$ no es un estado terminal}
-        \State \Comment{Ajuste dinámico de la exploración}
-        \State $\epsilon \leftarrow \text{min\_}\epsilon + (1 - \text{min\_}\epsilon) \cdot e^{-decay\_rate \cdot e}$
-        \State $a_t \leftarrow \text{choose\_action}(s_t, \epsilon)$ \Comment{Selección $\epsilon$-greedy}
-        \State Ejecutar $a_t$, observar recompensa $r_t$ y nuevo estado $s_{t+1}$
-        \State $R_{ep} \leftarrow R_{ep} + r_t$
+    \While{$s_t$ is not terminal}
+        \State \Comment{Dynamically adjust exploration rate}
+        \State $\varepsilon_t \leftarrow \varepsilon_{\min} + (1 - \varepsilon_{\min}) \cdot \exp(-\text{decay\_rate} \cdot e)$
+        \State $a_t \leftarrow \text{choose\_action}(s_t, \varepsilon_t)$ \Comment{$\varepsilon$-greedy selection}
+        \State Execute $a_t$, observe reward $r_{t+1}$ and next state $s_{t+1}$
+        \State $R_{ep} \leftarrow R_{ep} + r_{t+1}$
         
-        \State \Comment{Actualización adaptativa de Q-value (Sección IV-B, Eq. 1 & 2)}
-        \State $TD_{error} \leftarrow r_t + \gamma \cdot \max_{a'} Q(s_{t+1}, a') - Q(s_t, a_t)$
-        \State $\text{activación} \leftarrow \frac{1}{1 + \exp(-(|TD_{error}| - k))}$
-        \State $\alpha^* \leftarrow \alpha + (\alpha_{max} - \alpha) \cdot \text{activación}$ \Comment{Tasa de aprendizaje dinámica}
+        \State \Comment{Adaptively update Q-value (see \fref{eq:td_error} \& \fref{eq:dynamic_learning_rate})}
+        \State $TD_{error} \leftarrow r_{t+1} + \gamma \cdot \max_{a'} Q(s_{t+1}, a') - Q(s_t, a_t)$
+        \State $\text{activation} \leftarrow \frac{1}{1 + \exp(-(|TD_{error}| - k))}$
+        \State $\alpha^* \leftarrow \alpha + (\alpha_{\max} - \alpha) \cdot \text{activation}$ \Comment{Dynamic learning rate}
         
         \State $Q(s_t, a_t) \leftarrow Q(s_t, a_t) + \alpha^* \cdot TD_{error}$
         
         \State $s_t \leftarrow s_{t+1}$
     \EndWhile
     
-    \State \Comment{Detección de Deriva de Concepto al final del episodio (Sección III-A)}
-    \If{$PH\_Test.update(R_{ep})$}
-        \State \Comment{Deriva detectada: reiniciar la exploración}
+    \State \Comment{Detect Concept Drift at the end of the episode}
+    \If{$PH\_Test.update(R_{ep})$ is True}
+        \State \Comment{Drift detected: reset exploration schedule}
         \State $e \leftarrow 0$
         \State $PH\_Test.reset()$
     \Else
-        \State \Comment{Entorno estable: continuar decaimiento de exploración}
+        \State \Comment{Stable environment: continue exploration decay}
         \State $e \leftarrow e + 1$
     \EndIf
 \EndFor
