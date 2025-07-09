@@ -5,7 +5,7 @@
 \section{\ac{RL} Agents with Adaptive Behavior}
 \label{sec:implementation}
 
-This section introduces \adaptiverl, a self-adaptive Q-learning framework that enables agents to dynamically adapt to non-stationary environments, specifically to changes in reward functions (goals) and on-the-fly expansions of the action space. \adaptiverl integrates two core components, detailed in \ref{alg:morphin}: proactive environment monitoring using a concept drift detector, and an adaptive learning process that modulates exploration and learning rates to incorporate new knowledge while preserving prior experience. The implementation is publicly available.\footnote{Available at: \url{https://anonymous.4open.science/r/morphin_rl}} This approach aligns with the principles of Continual Reinforcement Learning (\ac{CRL})~\cite{abel2023definitioncontinualreinforcementlearning} and Self-Adaptive Systems (SAS)~\cite{WONG2022106934} by enabling agents to autonomously modify their learning strategy at runtime, ensuring resilience in non-stationary contexts.
+This section introduces \adaptiverl, a self-adaptive Q-learning framework that enables agents to dynamically adapt to non-stationary environments, specifically to changes in reward functions (goals) and on-the-fly expansions of the action space. \adaptiverl integrates two core components, detailed in Algorithm \ref{alg:morphin}: proactive environment monitoring using a concept drift detector, and an adaptive learning process that modulates exploration and learning rates to incorporate new knowledge while preserving prior experience. The implementation is publicly available.\footnote{Available at: \url{https://anonymous.4open.science/r/morphin_rl}} This approach aligns with the principles of \ac{CRL}~\cite{abel2023definitioncontinualreinforcementlearning} and Self-Adaptive Systems (SAS)~\cite{WONG2022106934} by enabling agents to autonomously modify their learning strategy at runtime, ensuring resilience in non-stationary contexts.
 
 \begin{algorithm}[hbt!]
 \caption{\adaptiverl: Adaptive Q-Learning with Concept Drift Detection}
@@ -28,7 +28,7 @@ This section introduces \adaptiverl, a self-adaptive Q-learning framework that e
         \State $a_t \leftarrow \text{choose\_action}(s_t, \varepsilon_t)$ \Comment{$\varepsilon$-greedy selection}
         \State Execute $a_t$, observe $r_{t+1}$ and $s_{t+1}$
         \State $R_{ep} \leftarrow R_{ep} + r_{t+1}$
-        \State\Comment{Adaptively update Q-value, see eq. \eqref{eq:td_error} \& \eqref{eq:dynamic_learning_rate}}
+        \State\Comment{Adaptively update Q-value with eq. \eqref{eq:td_error} \& \eqref{eq:dynamic_learning_rate}}
         \State $Q(s_t, a_t) \leftarrow Q(s_t, a_t) + \alpha^* \cdot TD_{error}$
         \State $s_t \leftarrow s_{t+1}$
     \EndWhile
@@ -49,9 +49,9 @@ This section introduces \adaptiverl, a self-adaptive Q-learning framework that e
 \subsection{Environment Monitoring and Adaptation}
 \label{sec:morphin-adaptation}
 
-To adapt, an agent must first recognize environmental changes. \adaptiverl achieves this by monitoring the stream of cumulative episode rewards ($R_{ep}$) with the Page-Hinkley Test (PH-test)~\cite{mignon2017adaptive,networkdynamicrl,changingpointdetection}. A drift is flagged if the cumulative difference between $R_{ep}$ and its running mean exceeds a threshold $H$. The test's sensitivity is controlled by $H$ and a second hyperparameter, $\delta$, which were selected empirically based on the reward scale of each environment. As shown in \ref{alg:morphin} (lines 21--28), a detected drift triggers an immediate adaptive response: the exploration decay counter $e$ is reset to zero, forcing the exploration rate $\varepsilon^*$ to its maximum value. This compels the agent to re-explore the environment and learn the new dynamics, as visualized in \fref{fig:dynamic-eps_alph}.
+To adapt, an agent must first recognize environmental changes. \adaptiverl achieves this by monitoring the stream of cumulative episode rewards ($R_{ep}$) with the PH-test~\cite{mignon2017adaptive,networkdynamicrl,changingpointdetection}. A drift is flagged if the cumulative difference between $R_{ep}$ and its running mean exceeds a threshold $H$. The test's sensitivity is controlled by $H$ and a second hyperparameter, $\delta$, which were selected empirically based on the reward scale of each environment. As shown in Algorithm \ref{alg:morphin} (lines 21--28), a detected drift triggers an immediate adaptive response: the exploration decay counter $e$ is reset to zero, forcing the exploration rate $\varepsilon^*$ to its maximum value. This compels the agent to re-explore the environment and learn the new dynamics, as visualized in \fref{fig:morphin-dynamics}.
 
-Once a drift is detected, \adaptiverl employs a two-pronged strategy. The first part is the mandatory re-exploration described above. The second is a dynamic adjustment of the learning rate $\alpha^*$ to control the speed of knowledge acquisition. This dual mechanism is a cornerstone of \adaptiverl, designed to preserve prior knowledge and mitigate catastrophic forgetting. Unlike approaches that retrain from scratch, \adaptiverl never resets the Q-table; existing Q-values serve as an informed starting point for learning the new policy. This reuse of knowledge enables faster adaptation, as evidenced by the shorter re-learning periods in \fref{fig:dynamic-eps_alph}.
+Once a drift is detected, \adaptiverl employs a two-points strategy. The first part is the mandatory re-exploration described above. The second is a dynamic adjustment of the learning rate $\alpha^*$ to control the speed of knowledge acquisition. This dual mechanism is a cornerstone of \adaptiverl, designed to preserve prior knowledge and mitigate catastrophic forgetting. Unlike approaches that retrain from scratch, \adaptiverl never resets the Q-table; existing Q-values serve as an informed starting point for learning the new policy. This reuse of knowledge enables faster adaptation, as evidenced by the shorter re-learning periods showed in \fref{fig:morphin-dynamics}.
 
 The learning rate adaptation is driven by the Temporal Difference (TD) error, which quantifies the discrepancy between the predicted and actual outcomes of an action:
 \begin{equation} \label{eq:td_error}
@@ -66,20 +66,28 @@ Here, the hyperparameter $k$ controls the sensitivity of $\alpha^*$ to the TD-er
 
 This framework also handles an expanding action space. When a new action $a_{new}$ becomes available, the Q-table (a matrix of size $|A| \times |S|$) is dynamically augmented by adding a new row for $a_{new}$, initialized to zero. This event, detected as a drift, triggers the same unified response: $\varepsilon^*$ is reset to explore the new action's utility, and $\alpha^*$ adapts to integrate it into the policy.
 
-\begin{figure*}[hptb]
+\begin{figure*}[hbtp]
     \centering
-    \includegraphics[width=\textwidth]{eps_alph.png}
-    \caption{\adaptiverl's adaptive behavior of $\varepsilon^*$ and $\alpha^*$ under concept drift in a non-stationary $9\times 9$ gridworld. Red dashed lines mark goal swaps every 300 episodes. Upon drift detection, the PH-test resets an internal counter, causing the exploration rate $\varepsilon^*$ (purple) to maximize and then decay. Simultaneously, the learning rate $\alpha^*$ (green), a function of the TD-error, peaks when prediction errors are high post-drift and diminishes as the policy stabilizes. Scatter points show the magnitude of Q-values for actions taken during exploration (yellow) and exploitation (blue). Note how blue points cluster at high values in stable periods, indicating convergence, while post-drift, elevated $\varepsilon^*$ and $\alpha^*$ enable rapid re-learning.}
-    \label{fig:dynamic-eps_alph}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{figures/eps_alph.png}
+        \caption{\adaptiverl with adaptive $\varepsilon^*$ and $\alpha^*$.}
+        \label{fig:morphin-dynamics}
+    \end{subfigure}
+    \hfill 
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{figures/trad_eps.png}
+        \caption{Standard Q-learning with static $\varepsilon$-decay.}
+        \label{fig:baseline-dynamics}
+\end{subfigure}
+    
+    \caption{Internal dynamics of \adaptiverl versus a standard Q-learning agent, illustrating their contrasting responses to concept drift (red dashed lines) in the Gridworld scenario. 
+    \textbf{(a) \adaptiverl's adaptive response:} Upon detecting a drift, the PH-test triggers a reset of the exploration rate $\varepsilon^*$ (purple), forcing re-exploration. The resulting high TD-errors cause the dynamic learning rate $\alpha^*$ (green) to increase, accelerating the integration of new knowledge and enabling rapid policy recovery. 
+    \textbf{(b) Standard Q-learning's static behavior:} The baseline agent uses a single, exponentially decaying exploration schedule ($\varepsilon$). After the initial convergence, the low exploration rate prevents it from adapting to subsequent drifts, causing the agent to remain committed to an obsolete policy and resulting in a sustained performance collapse.}
+    \label{fig:dynamics-combined}
 \end{figure*}
 
-\begin{figure*}[hptb]
-    \centering
-    \includegraphics[width=\textwidth]{trad_eps.png}
-    \caption{Behavior of standard Q-learning with a static $\varepsilon$-decay schedule. After the initial convergence, the low exploration rate prevents the agent from adapting to subsequent drifts at episodes 300, 600, 900, and 1200. The agent remains committed to its obsolete policy, with Q-values recovering very slowly only for truly novel goal changes (300-600 and 900-1200) and never reaching convergence within the episode horizon.}
-    \label{fig:trad-q}
-\end{figure*}
-
-The effectiveness of \adaptiverl becomes evident when contrasted with a standard Q-learning agent (\fref{fig:trad-q}). The baseline agent's static exploration schedule prevents adaptation to new goals, causing a sustained drop in performance. In sharp contrast, \adaptiverl (\fref{fig:dynamic-eps_alph}) explicitly detects changes and coordinates exploration ($\varepsilon^*$) with learning speed ($\alpha^*$) to rapidly converge to a new optimal policy after each drift.
+The effectiveness of \adaptiverl becomes evident when contrasted with a standard Q-learning agent (\fref{fig:baseline-dynamics}). The baseline agent's static exploration schedule prevents adaptation to new goals, causing a sustained drop in performance. In sharp contrast, \adaptiverl (\fref{fig:morphin-dynamics}) explicitly detects changes and coordinates exploration ($\varepsilon^*$) with learning speed ($\alpha^*$) to rapidly converge to a new optimal policy after each drift.
 
 \endinput

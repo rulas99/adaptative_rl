@@ -16,7 +16,7 @@ Real-world environments often violate stationarity assumptions, leading to \emph
 \]
 where changes in $R_t$ and $\mathcal{A}_t$ constitute \emph{concept drifts}. Q-learning updates action values using the Bellman equation:
 \vspace{1em}
-\input{equations/bellman}
+\input{bellman}
 \vspace{1em}
 
 While effective in stationary settings, standard Q-learning struggles when $R_t$ or $\mathcal{A}_t$ change over time. Our work addresses this limitation through adaptive mechanisms that detect and respond to environmental changes in the form of modifications to the reward distribution function and action space expansions. Note that changes in the state space have already been studied by~\citet{ConstructivistRL}.
