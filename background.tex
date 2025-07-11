@@ -14,7 +14,7 @@ Real-world environments often violate stationarity assumptions, leading to \emph
 \[
 \{\mathcal{M}_t\}_{t=1}^\infty \quad\text{with}\quad \mathcal{M}_t = \bigl\langle \mathcal{S}, \mathcal{A}_t, P_t, R_t, \gamma \bigr\rangle
 \]
-where changes in $R_t$ and $\mathcal{A}_t$ constitute \emph{concept drifts}. Q-learning updates action values using the Bellman equation:
+where changes in $R_t$ and $\mathcal{A}_t$ constitute \emph{concept drifts}, which refer to shifts in the environment's underlying dynamics. This implies that the agent's previously learned policy and Q-values may become suboptimal for maximizing future rewards. Q-learning updates action values using the Bellman equation:
 \vspace{1em}
 \input{equations/bellman}
 \vspace{1em}
