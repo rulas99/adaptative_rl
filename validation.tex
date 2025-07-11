@@ -14,21 +14,20 @@ Traffic-Signal Control: We model a two-lane intersection using a custom extended
 
 \subsection{Experimental Setting}
 Experiments were run using Python 3.12 and Gym 0.26.2. We compare \adaptiverl against a Standard Q-learning (Baseline) agent with a fixed learning rate ($\alpha=0.1$) and a single, non-resetting exponential exploration decay. \adaptiverl uses the PH-test to trigger exploration resets ($\varepsilon \to 1$) and a dynamic learning rate $\alpha^*$ modulated by the TD-error. Hyperparameters for both scenarios (e.g., $k=5, \delta=0.5, H=300$) were determined empirically to suit the reward scale of each environment.
-
 \subsection{Evaluation Results}
-Gridworld: \adaptiverl demonstrates superior adaptation and knowledge retention. \fref{fig:q-heatmaps-goals} shows that after 1,500 episodes, \adaptiverl (left) retains high Q-values for both current and previously learned goals, preventing catastrophic forgetting. The baseline (right) overwrites past knowledge, remembering only the most recent goal. This adaptability yields significant efficiency gains, as shown in \fref{tab:gridworld-table}: \adaptiverl requires up to $1.9\times$ fewer steps to converge after a drift. Furthermore, \fref{fig:q-heatmaps-actions} shows that \adaptiverl effectively incorporates the new ``jump'' action to find a more optimal policy, while the baseline struggles to update its established policy.
+Gridworld: \adaptiverl demonstrates superior adaptation and knowledge retention. As illustrated in \fref{fig:q-heatmaps-goals}, after 1,500 episodes, \adaptiverl (left) successfully retains high Q-values for both current and previously learned goals, effectively preventing catastrophic forgetting. In contrast, the baseline agent (right) overwrites past knowledge and only remembers the most recent goal. This enhanced adaptability translates to significant efficiency gains, as shown in \fref{tab:gridworld-table}. \adaptiverl improves overall learning efficiency by a factor of 1.7x (measured in total steps) and successfully converges after each induced drift. The baseline agent, however, fails to converge after the first 300-episode interval. Furthermore, \fref{fig:q-heatmaps-actions} shows that when the action space is expanded, \adaptiverl effectively incorporates the new ``jump'' action to discover a more optimal policy, whereas the baseline agent struggles to update its established policy and remains suboptimal.
 
 \begin{table}[hbtp]
 \centering
-\caption{Average steps to convergence and total steps over 1,500 episodes in Gridworld (1,000 runs). Dashes (--) indicate failure to converge within the 300-episode interval.}
+\caption{Average convergence time (in episodes after drift) and total steps over 1,500 episodes in Gridworld (1,000 runs). Dashes (--) indicate failure to converge within the 300-episode interval. An independent t-test confirms the difference in total steps is statistically significant ($p < 0.05$).}
 \label{tab:gridworld-table}
 \resizebox{\columnwidth}{!}{
 \begin{tabular}{l | c | c | c | c }
 \toprule
-\textbf{Agent} & \textbf{1st Change} & \textbf{2nd Change} & \textbf{3rd Change} & \textbf{Total Steps} \\
+\textbf{Agent} & \textbf{1st Drift} & \textbf{2nd Drift} & \textbf{3rd Drift} & \textbf{Total Steps} \\
 \midrule
 Q-Learning  & 256.40 $\pm$ 4.35\% & -- & -- & 40,683.74 $\pm$ 1.33\% \\
-\textbf{\adaptiverl} & 135.81 $\pm$ 9.31\% & 475.17 $\pm$ 5.80\% & 767.81 $\pm$ 3.13\% & 23,292.07 $\pm$ 6.33\% \\
+\textbf{\adaptiverl} & 135.81 $\pm$ 9.31\% & 175.17 $\pm$ 5.80\% & 167.81 $\pm$ 3.13\% & 23,292.07 $\pm$ 6.33\% \\
 \bottomrule
 \end{tabular}
 }
@@ -61,9 +60,7 @@ Traffic-Signal Control: In this scenario, \adaptiverl again shows robust adaptat
 \begin{figure*}[h]
     \centering
     \includegraphics[width=\textwidth]{figures/traffic_learning_curve.png}
-    \caption{Learning performance in the traffic scenario. After the first drift (episode 3,000), \adaptiverl detects the change (green line) and rapidly recovers. Traditional Q-learning suffers prolonged degradation. The second drift (episode 8,000) is not detected by the PH-tests not detected because the new reward
-distribution is a subset of previously seen values and does not
-exceed the sensitivity threshold }
+    \caption{Learning performance in the traffic scenario. After the first drift (episode 3,000), \adaptiverl detects the change (green line) and rapidly recovers. Traditional Q-learning suffers prolonged degradation. The second drift (episode 8,000) is not detected by the PH-tests because the new reward distribution is a subset of previously seen values and does not exceed the sensitivity threshold.}
     \label{fig:traffic-learning-curve}
 \end{figure*}
 

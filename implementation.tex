@@ -82,9 +82,7 @@ This framework also handles an expanding action space. When a new action $a_{new
         \label{fig:baseline-dynamics}
 \end{subfigure}
     
-    \caption{Internal dynamics of \adaptiverl versus a standard Q-learning agent, illustrating their contrasting responses to concept drift (red dashed lines) in the Gridworld scenario. 
-    \textbf{(a) \adaptiverl's adaptive response:} Upon detecting a drift, the PH-test triggers a reset of the exploration rate $\varepsilon^*$ (purple), forcing re-exploration. The resulting high TD-errors cause the dynamic learning rate $\alpha^*$ (green) to increase, accelerating the integration of new knowledge and enabling rapid policy recovery. 
-    \textbf{(b) Standard Q-learning's static behavior:} The baseline agent uses a single, exponentially decaying exploration schedule ($\varepsilon$). After the initial convergence, the low exploration rate prevents it from adapting to subsequent drifts, causing the agent to remain committed to an obsolete policy and resulting in a sustained performance collapse.}
+    \caption{Internal dynamics of \adaptiverl versus a standard Q-learning agent, illustrating their contrasting responses to concept drift (red dashed lines) in the Gridworld scenario. (a) \adaptiverl's adaptive response: Upon detecting a drift, the PH-test triggers a reset of the exploration rate $\varepsilon^*$ (purple), forcing re-exploration. The resulting high TD-errors cause the dynamic learning rate $\alpha^*$ (green) to increase, accelerating the integration of new knowledge and enabling rapid policy recovery. (b) Standard Q-learning's static behavior: The baseline agent uses a single, exponentially decaying exploration schedule ($\varepsilon$). After the initial convergence, the low exploration rate prevents it from adapting to subsequent drifts, causing the agent to remain committed to an obsolete policy and resulting in a sustained performance collapse.}
     \label{fig:dynamics-combined}
 \end{figure*}
 
