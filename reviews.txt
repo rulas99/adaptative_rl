@@ -80,16 +80,16 @@ After reading the paper, some major concerns remain which I'd like to summarize 
 Further minor issues:  
 - Please add reference in the introduction for reinforcement learning
 - The formal definition of a non-stationary MDP (as sequence of MDPs over time t) as a set {MDP_t} mathematically seems to be inappropriate since it would exclude that the exact same MDP can appear twice in the sequence, right?
-- `Can rapidly convergence...' --> `can rapidly converge...'
-- `we introduce an adaptive mechanisms...' --> `mechanism'
-- `agents continuously observed' --> `observe'?
-- `posible' --> `possible'
-- `The key to enable agents, ...' --> to `enable' for what? --> Please clarify
-- `The TD error quantifies the difference between the predicted reward and the actual reward received' --> this is not perfectly true and a bit imprecise. Actually the state-action (or Q) values are predicted which represent the expected discounted cumulative (i.e., long term) reward. Please be more precise at this place.
-- `Nonetheless, the runtime efficiency the agents is actually lower' --> what is meant with runtime efficiency here exactly. I think there is also an 'of' missing.
-- In the future work section `Active Learning' is mentioned but it remains unclear for what purpose this should be explored further.
+- `Can rapidly convergence...' --> `can rapidly converge...' (TACKLED)
+- `we introduce an adaptive mechanisms...' --> `mechanism' (TACKLED)
+- `agents continuously observed' --> `observe'? (TACKLED)
+- `posible' --> `possible' (TACKLED)
+- `The key to enable agents, ...' --> to `enable' for what? --> Please clarify (TACKLED)
+- `The TD error quantifies the difference between the predicted reward and the actual reward received' --> this is not perfectly true and a bit imprecise. Actually the state-action (or Q) values are predicted which represent the expected discounted cumulative (i.e., long term) reward. Please be more precise at this place. (TACKLED)
+- `Nonetheless, the runtime efficiency the agents is actually lower' --> what is meant with runtime efficiency here exactly. I think there is also an 'of' missing. (TACKLED)
+- In the future work section `Active Learning' is mentioned but it remains unclear for what purpose this should be explored further. (TACKLED)
 - The references sections exceeds the page limit. Please shorten accordingly.
-- Consistency: learning parameters vs. hyperparameters. Authors should clearly delineate between the two concepts. Learning parameters usually refer to the weights of a parametric model such as a neural network, whereas in this work hyperparameters are adapted.
+- Consistency: learning parameters vs. hyperparameters. Authors should clearly delineate between the two concepts. Learning parameters usually refer to the weights of a parametric model such as a neural network, whereas in this work hyperparameters are adapted. (TACKLED)
 
 Based on the points of criticism as summarized above, I unfortunately cannot recommend acceptance of the contribution as a full main-track conference paper in its current state.
 
@@ -108,13 +108,13 @@ The paper presents a self-adaptive Q-learning agent capable of on-the-fly adapta
 The topic of the paper aligns well with ACSOS cfp and is interesting. The paper is well written.
 However, I am not fully convinced by the proposed approach, for the reasons outlined below.
 
-Some of the solutions proposed by the authors appear to be incremental with respect to the state of the art. In particular, the idea of adaptively increasing the exploration rate by modifying the ε-greedy strategy after a change point is not novel, as the authors themselves acknowledge. Change point detection based on Page-Hinkley statistics has also been applied, see for example:
+Some of the solutions proposed by the authors appear to be incremental with respect to the state of the art. In particular, the idea of adaptively increasing the exploration rate by modifying the ε-greedy strategy after a change point is not novel, as the authors themselves acknowledge. Change point detection based on Page-Hinkley statistics has also been applied, see for example: (TACKLED)
 - Hartland et al., Change point detection and meta-bandits for online learning
 in dynamic environments, CAp 237–250, 2007. https://nam10.safelinks.protection.outlook.com/?url=https%3A%2F%2Finria.hal.science%2Finria-00164033v1%2Fdocument&data=05%7C02%7Cn.cardozo%40uniandes.edu.co%7C838145bd024f4218258908ddb5e2902b%7Cfabd047cff48492a8bbb8f98b9fb9cca%7C0%7C0%7C638866706877376443%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=CYAMz4Yls12moGb%2FiMjmr5d6FYtOxY5NJOpPdnbZMU4%3D&reserved=0
 - Padakandla, A Survey of Reinforcement Learning Algorithms for Dynamically Varying Environments. ACM Comput. Surv. 54, 6, 2022, https://nam10.safelinks.protection.outlook.com/?url=https%3A%2F%2Fdoi.org%2F10.1145%2F3459991&data=05%7C02%7Cn.cardozo%40uniandes.edu.co%7C838145bd024f4218258908ddb5e2902b%7Cfabd047cff48492a8bbb8f98b9fb9cca%7C0%7C0%7C638866706877403407%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=jxqNWuyQk9JhsQHzahxEbYxG%2F%2FEPa1IFzOGjSM9%2Fr8M%3D&reserved=0
 As a result, the overall novelty of the proposed approach appears to be limited.
 
-Furthermore, the paper lacks a comparison with other approaches that address non-stationary MDPs. Several relevant works tackle these issues, including some that consider the traffic signal control problem, as in the submitted paper.
+Furthermore, the paper lacks a comparison with other approaches that address non-stationary MDPs. Several relevant works tackle these issues, including some that consider the traffic signal control problem, as in the submitted paper. (TACKLED)
 - Padakandla and Bhatnagar, Reinforcement learning algorithm for non-stationary environments. Appl Intell 50, 3590–3606 (2020). https://nam10.safelinks.protection.outlook.com/?url=https%3A%2F%2Fdoi.org%2F10.1007%2Fs10489-020-01758-5&data=05%7C02%7Cn.cardozo%40uniandes.edu.co%7C838145bd024f4218258908ddb5e2902b%7Cfabd047cff48492a8bbb8f98b9fb9cca%7C0%7C0%7C638866706877419742%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=RHuxaT%2BnNX8BEXrSQTTz5y2NftK0%2BQrjtYKOaDWsxwQ%3D&reserved=0
 - Mao et al., Near-Optimal Model-Free Reinforcement Learning in Non-Stationary Episodic MDPs
 Proceedings of the 38th International Conference on Machine Learning, PMLR 139:7447-7458, 2021. https://nam10.safelinks.protection.outlook.com/?url=https%3A%2F%2Fproceedings.mlr.press%2Fv139%2Fmao21b.html&data=05%7C02%7Cn.cardozo%40uniandes.edu.co%7C838145bd024f4218258908ddb5e2902b%7Cfabd047cff48492a8bbb8f98b9fb9cca%7C0%7C0%7C638866706877435094%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=YX%2BVs9CdFR6dZ3P4UWUm9infvzlhvBBxOMXzJdOpJfA%3D&reserved=0
@@ -122,4 +122,4 @@ Proceedings of the 38th International Conference on Machine Learning, PMLR 139:7
 
 Regarding the scale of the tested scenario, it is relatively small, as the authors consider only two crossing lanes. Consequently, it remains unclear how the proposed approach would scale to larger cases.
 
-Ref. [18] should be updated to https://nam10.safelinks.protection.outlook.com/?url=https%3A%2F%2Fdoi.org%2F10.1016%2Fj.infsof.2022.106934&data=05%7C02%7Cn.cardozo%40uniandes.edu.co%7C838145bd024f4218258908ddb5e2902b%7Cfabd047cff48492a8bbb8f98b9fb9cca%7C0%7C0%7C638866706877465605%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=7zKiJiaeMAAxEFsTM7qYjozYf3aORTVvqhi1NoHK1UM%3D&reserved=0
+Ref. [18] should be updated to https://nam10.safelinks.protection.outlook.com/?url=https%3A%2F%2Fdoi.org%2F10.1016%2Fj.infsof.2022.106934&data=05%7C02%7Cn.cardozo%40uniandes.edu.co%7C838145bd024f4218258908ddb5e2902b%7Cfabd047cff48492a8bbb8f98b9fb9cca%7C0%7C0%7C638866706877465605%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=7zKiJiaeMAAxEFsTM7qYjozYf3aORTVvqhi1NoHK1UM%3D&reserved=0 (TACKLED)

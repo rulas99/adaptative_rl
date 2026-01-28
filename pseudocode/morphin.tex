@@ -1,0 +1,38 @@
+\begin{algorithm}[hbt!]
+\caption{\adaptiverl: Adaptive Q-Learning with Concept Drift Detection}
+\label{alg:morphin}
+\begin{algorithmic}[1]
+\State \textbf{Initialize} parameters:
+\State \quad Base learning rate $\alpha$, max learning rate $\alpha_{\max}$, discount factor $\gamma$
+\State \quad TD-error sensitivity $k$, exploration decay parameters $\varepsilon_{\min}, \text{decay\_rate}$
+\State \quad Page-Hinkley parameters: sensitivity $\delta$, threshold $H$
+\State \textbf{Initialize} Q-table $Q(s, a) \leftarrow 0$ for all $s \in S, a \in A$
+\State \textbf{Initialize} drift detector $PH\_Test(\delta, H)$
+\State \textbf{Initialize} exploration decay counter $e \leftarrow 0$
+
+\For{episode = 1 to N}
+    \State Reset state $s_t \leftarrow s_{\text{initial}}$
+    \State Reset cumulative episode reward $R_{ep} \leftarrow 0$
+    
+    \While{$s_t$ is not terminal}
+        \State $\varepsilon_t \leftarrow \varepsilon_{\min} + (1 - \varepsilon_{\min}) \cdot \exp(-\text{decay\_rate} \cdot e)$
+        \State $a_t \leftarrow \text{choose\_action}(s_t, \varepsilon_t)$ \Comment{$\varepsilon$-greedy selection}
+        \State Execute $a_t$, observe $r_{t+1}$ and $s_{t+1}$
+        \State $R_{ep} \leftarrow R_{ep} + r_{t+1}$
+        \State\Comment{Adaptively update Q-value, see eq. \eqref{eq:td_error} \& \eqref{eq:dynamic_learning_rate}}
+        \State $Q(s_t, a_t) \leftarrow Q(s_t, a_t) + \alpha^* \cdot TD_{error}$
+        \State $s_t \leftarrow s_{t+1}$
+    \EndWhile
+    
+    \State\Comment{Detect Concept Drift at the end of the episode}
+    \If{$PH\_Test.update(R_{ep})$ is True}
+        \State \Comment{Drift detected: reset exploration schedule}
+        \State $e \leftarrow 0$
+        \State $PH\_Test.reset()$
+    \Else
+        \State \Comment{Stable environment: continue exploration decay}
+        \State $e \leftarrow e + 1$
+    \EndIf
+\EndFor
+\end{algorithmic}
+\end{algorithm}

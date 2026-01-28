@@ -180,3 +180,4 @@ main.run.xml
 main.fdb_latexmk
 *.synctex(busy)
 *.fls
+*.fdb_latexmk

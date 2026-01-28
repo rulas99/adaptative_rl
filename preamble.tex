@@ -27,8 +27,8 @@
 \usepackage{acronym}
 \usepackage{url}
 \usepackage{textgreek} % Para caracteres griegos
-
-
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 
 % Package 'biblatex'
 \usepackage[backend=bibtex,
@@ -46,116 +46,7 @@
 
 %\renewcommand{\bibfont}{\footnotesize}
 
-\addbibresource{bib/general.bib}
-\addbibresource{bib/compsci.bib}
-\addbibresource{bib/learning.bib}
 \addbibresource{local.bib}
-
-%\AtEveryBibitem{%
-%   \clearlist{address}
-%   \clearfield{date}
-%   \clearfield{doi}
-%   \clearfield{eprint}
-%   \clearfield{isbn}
-%   \clearfield{issn}
-%   \clearfield{month}
-%   \clearfield{note}
-%   \clearfield{arxivId}
-%   \clearfield{pages}
-%   \clearfield{volume}
-%   \clearfield{number}
-%   \clearlist{location}
-%   \clearfield{series}
-%   \clearfield{url}
-%   \clearname{editor}
-%   \ifentrytype{inproceedings}
-%     {\clearfield{day}
-%      \clearfield{month}
-%      \clearfield{volume}}{}
-%}
-%
-%\DeclareFieldFormat*{title}{\textsl{#1}\isdot}
-%\DeclareFieldFormat*{journaltitle}{#1}
-%\DeclareFieldFormat*{booktitle}{#1}
-%
-%\renewcommand{\bibfont}{\footnotesize}
-%\renewbibmacro{in:}{} % supress 'In: ' form
-%\renewbibmacro{ser.}{} % supress 'ser.: ' form
-%
-%\DeclareSourcemap
-% {\maps[datatype=bibtex,overwrite]
-%   {% Tag entries (through keywords)
-%    \map
-%      {\step[fieldsource=publisher,
-%       match=\regexp{Association for Computing Machinery}, replace={ACM}]}
-%    \map
-%      {\step[fieldsource=booktitle,
-%       match=\regexp{[Pp]roceedings}, replace={Proc.}]}
-%    \map
-%      {\step[fieldsource=booktitle,
-%       match=\regexp{[Ii]nternational}, replace={Intl.}]}
-%    \map
-%      {\step[fieldsource=booktitle,
-%       match=\regexp{[Cc]onference}, replace={Conf.}]}
-%    \map
-%      {\step[fieldsource=booktitle,
-%       match=\regexp{[Ff]oundation[s]}, replace={Found.}]}
-%    \map
-%      {\step[fieldsource=booktitle,
-%       match=\regexp{[Ss]oftware}, replace={Soft.}]}
-%    \map
-%      {\step[fieldsource=booktitle,
-%       match=\regexp{[Ee]ngineering}, replace={Eng.}]}
-%    \map
-%      {\step[fieldsource=booktitle,
-%       match=\regexp{[Ss]ymposium}, replace={Symp.}]}
-%    \map
-%      {\step[fieldsource=journal,
-%       match=\regexp{[Jj]ournal}, replace={Jour.}]}
-%    \map
-%      {\step[fieldsource=journal,
-%       match=\regexp{[Ii]nternational}, replace={Intl.}]}
-%    \map
-%      {\step[fieldsource=journal,
-%       match=\regexp{[Aa]pplications}, replace={Apps.}]}
-%    \map
-%      {\step[fieldsource=journal,
-%       match=\regexp{[Ss]ystems}, replace={Sys.}]}
-%    \map
-%      {\step[fieldsource=journal,
-%       match=\regexp{[Tt]ransactions}, replace={Trans.}]}
-%    \map
-%      {\step[fieldsource=journal,
-%       match=\regexp{[Aa]utonomous and Adaptive Systems}, replace={Auton. Adapt. Syst.}]}
-%    \map
-%      {\step[fieldsource=booktitle,
-%       match=\regexp{[Pp]roceedings\s+of\s+the.+[Ee]uropean\s+[Cc]onference\s+in}, replace={European Conf. in}]}
-%    \map
-%      {\step[fieldsource=booktitle,
-%       match=\regexp{In\s+[Pp]roceedings\s+of\s+the\s+[Ss]ymposium\s+on}, replace={Symp. on}]}
-%     \map
-%      {\step[fieldsource=publisher,
-%       match=\regexp{[Aa]ssociation\s+for\s+[Cc]omputing\s+[Mm]achinery\s}, replace={ACM}]}
-%     \map
-%      {\step[fieldsource=booktitle,
-%       match=\regexp{[Pp]roceedings\s+of\s+the\s+[Ii]nternational\s+[Cc]onference\s+on}, replace={Intl. Conf. on}]}
-%    \map
-%      {\step[fieldsource=booktitle,
-%       match=\regexp{[Pp]roceedings\s+of\s+the\s+[Ii]nternational\s+[Ww]orkshop\s+on}, replace={Intl. Workshop on}]}}}
-
-
-%\theoremstyle{plain}
-%\newtheorem{theorem}{Theorem}
-%\newtheorem{lemma}{Lemma}%[section]
-%\newtheorem{cor}{Corollary}[theorem]
-%\theoremstyle{definition}
-%\newtheorem{definition}{Definition}
-%\newtheorem{ex}{Example}
-
-% Avoid italics in examples (it's awful to read)
-%\let\origEx\ex
-%\let\origendEx\endex
-%\renewenvironment{ex}{\origEx\upshape}{\origendEx}
 
 
 % fancyref

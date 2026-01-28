@@ -1,4 +1,4 @@
-% $Id: conclusion.tex 
+% $Id: background.tex 
 % !TEX root = main.tex
 
 %%
@@ -6,81 +6,37 @@
 \label{sec:background}
 
 %%%%
-\subsection{\acl{RL}}
+\subsection{\acl{RL} in Non-Stationary Environments}
 
-In \ac{RL}, agents learn to map environmental situations (environment states) to actions that maximize a numerical reward signal received from the environment in the long term~\cite{sutton18}. \ac{RL} problems are formulated as Markov Decision Processes (MDPs), defined by the tuple $\mathcal{M} = \langle \mathcal{S}, \mathcal{A}, P, R, \gamma \rangle$, where:
-$\mathcal{S}$ is the state space, comprising all relevant states of the environment;
-$\mathcal{A}$ is the action space, i.e., the set of all actions the agent can perform to affect the environment;
-$P(s_{t+1} \mid s_t, a_t)$ is the transition probability from state {\color{purple}$s_t$} to {\color{purple}$s_{t+1}$} under action {\color{purple}$a_t$};
-$R(s_t, a_t)$ is the reward function, providing the numerical signal ($r$) that encodes the positive or negative impact of taking action {\color{purple}$a_t$} in state {\color{purple}$s_t$} at each execution step $t$; and $\gamma \in [0, 1]$ is the discount factor, which determines the importance of future rewards.
+\ac{RL} agents learn optimal policies by interacting with environments formulated as \acp{MDP} $\mathcal{M} = \langle \mathcal{S}, \mathcal{A}, P, R, \gamma \rangle$, where $\mathcal{S}$ and $\mathcal{A}$ are the state and action spaces, $P$ represents transition probabilities, $R$ is the reward function, and $\gamma$ is the discount factor~\cite{sutton18}.
 
-In stationary settings, $P$ and $R$ remain fixed over time, and the agent’s objective is to learn a policy $\pi: \mathcal{S} \to \mathcal{A}$ that maximizes the expected discounted return. However, real-world environments often violate this stationarity assumption: transition dynamics and/or reward functions may shift due to evolving conditions. We model such scenarios as \emph{non-stationary} MDPs, represented by a sequence
+Real-world environments often violate stationarity assumptions, leading to \emph{non-stationary} MDPs represented as temporal sequences:
 \[
-\{\mathcal{M}_t\}_{t=1}^\infty
-\quad\text{with}\quad
-\mathcal{M}_t = \bigl\langle \mathcal{S}, \mathcal{A}_t, P_t, R_t, \gamma \bigr\rangle,
+\{\mathcal{M}_t\}_{t=1}^\infty \quad\text{with}\quad \mathcal{M}_t = \bigl\langle \mathcal{S}, \mathcal{A}_t, P_t, R_t, \gamma \bigr\rangle
 \]
-where $P_t$ and/or $R_t$ change at unknown time steps $t$ (``concept drifts''). In this work, we further consider the novel scenario where the agent's action space $\mathcal{A}$ may also change over time. Detecting and adapting to these drifts is central to \ac{CRL}~\cite{khetarpal2022continualreinforcementlearningreview,abel2023definitioncontinualreinforcementlearning}, which treats learning as an ongoing process across a continually changing sequence of tasks.
-
-Q-learning~\cite{watkins92} is a widely used model-free approach in \ac{RL}. The long-term quality of an action performed at a given state is computed iteratively in a series of steps and is represented by a Q value,
-$\mathit{Q(s,a)}$.
-Formally, each execution step $t$ captures information from the environment and maps it to a state
-{\color{purple}$s_t$} $\in \mathcal{S}$ in its state space. It then selects an
-action {\color{purple}$a_t$} $\in \mathcal{A}$ from its action space and executes it. The agent
-receives a reward {\color{Bittersweet}$r_t$} from the environment when it moves to the next state
-$s_{t+1} \in \mathcal{S}$. The reward is used to update the optimality of performing the
-action {\color{Mulberry}$a_t$} at state {\color{purple}$s_t$}. The agent's goal is to learn
-a policy (\i.e. the best-fit action for each state) that maximizes the reward of the
-long-run behavior. The learning rate \lrate{\alpha} determines how much new experiences 
-overwrite previously learned experiences, and the discount factor {\color{RoyalBlue} $\gamma$} 
-determines how much future rewards are discounted so that agents prioritize immediate actions and 
-can plan the best long-term actions. At each time step $t$, the Q value of an action 
-{\color{purple}$a_{t+1}$} taken in state {\color{purple}$s_{t+1}$}, $Q(s_{t+1}, a_{t+1})$, is updated by 
-the Bellman learning equation as follows:
-
+where changes in $R_t$ and $\mathcal{A}_t$ constitute \emph{concept drifts}, which refer to shifts in the environment's underlying dynamics. This implies that the agent's previously learned policy and Q-values may become suboptimal for maximizing future rewards. Q-learning updates action values using the Bellman equation:
 \vspace{1em}
 \input{equations/bellman}
 \vspace{1em}
 
-While Q-learning converges under stationary conditions (with appropriate decay of \lrate{\alpha}), it 
-can struggle when $P_t$ or $R_t$ change over time. Our work builds on this foundation by 
-incorporating online concept-drift detection and adaptive updates, enabling the agent to remain 
-effective in non-stationary MDPs. We focus particularly on shifts in the reward function $R_t$, which 
-may also induce changes in the action space $\mathcal{A}_t$.
-
+While effective in stationary settings, standard Q-learning struggles when $R_t$ or $\mathcal{A}_t$ change over time. Our work addresses this limitation through adaptive mechanisms that detect and respond to environmental changes in the form of modifications to the reward distribution function and action space expansions. We focus on rewards and action spaces, as changes in the state space has been addressed in the literature~\cite{ConstructivistRL}.
 
 %%%%
-\subsection{Motivating example}
+\subsection{Motivating Example}
 \label{sec:motivation}
-
-
-To motivate the adaptation of agent's behavior to changing goals and the acquisition of new actions, 
-we use two scenarios of the Gridworld benchmark as a running example.
-
-Our Gridworld configuration, consists of a matrix (of $9\times 9$) where every cell is 
-associated with a reward of $-1$, except for a single goal state that has a reward of $+100$ as shown 
-in the left-hand side of \fref{fig:r-change}. The agent begins each episode at the grid's center and may 
-move in four directions: \spy{up}, \spy{down}, \spy{left}, or \spy{right}. Initially, the goal is placed in the 
-top-left corner.  
-
-In the first scenario, we allow the goal state of the environment to change. Such changes are unknown 
-to the agents beforehand~\cite{cardozo21} and maybe due to the reallocation of 
-objectives~\cite{khetarpal2022continualreinforcementlearningreview} (\eg reorganizing products in a 
-warehouse for robotic fulfillment systems), or the shift to new objectives~\cite{florensa18} (\eg UAV drones 
-changing their mission due to flight plan changes, or changing in leadership for flight formations).
-
-\begin{figure*}[hptb]
-    \centering
-    \includegraphics[width=0.9\textwidth]{figures/rewards_change}
-    \caption{Non-Stationary Gridworld: Concept drift is induced by relocating the reward. The agent starts at the center and must reach the goal, which alternates between the top-left and bottom-right corners every 300 episodes.}
-    \label{fig:r-change}
-\end{figure*}
-
-Additionally, we consider a scenario of adding walls to the Gridworld, blocking the agent's movement 
-according to its initial set of actions (\fref{fig:q-value-comp2}). For such scenario, we enable the agent 
-to  extended its action space by acquiring new actions that provide additional capabilities to the agent 
-(\ie, jumping). Such situations are common in robotics, particularly with modular or evolving robots~\cite{eiben20evolving,miras20environmental}, or in swarm robotics~\cite{schranz20swarm}, where agents acquire new capabilities through the physical attachment of components, the ability to combine actions with nearby robots, or the transfer of responsibilities and behaviors among agents. In all these cases, the agent is expected to adapt to such changes and efficiently update its policy to leverage the newly acquired behaviors.
+We motivate our work using a $9\times 9$ Gridworld benchmark, where agents navigate from the center of the board to a goal state (\ie a state with reward $+100$) while avoiding negative rewards (states with reward $-1$). The environment presents two adaptation challenges:
+\begin{itemize}
+    \item Goal Relocation: The target switches between corners, from the top-left corner to the bottom 
+    right-corner. This requiring agents to adapt to new reward distributions without losing previously 
+    learned knowledge, as the goal changes multiple times. In each change, the agent should take less 
+    time in learning the behavior to reach the goal, than the required time to learn from scratch.
+    \item Action Space Expansion: New actions (\eg jumping over obstacles) are introduced, requiring 
+    agents to integrate new capabilities into existing policies to further optimize the policy with the new 
+    actions.
+\end{itemize}
 
 
 \endinput
 
+
+For the traffic signal control scenario, agents must adapt to changing traffic patterns and incorporate new actions like adjusting signal timings or phases. These scenarios reflect real-world applications like robotic systems adapting to changing objectives or acquiring new capabilities through modular components.

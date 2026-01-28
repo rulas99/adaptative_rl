@@ -14,53 +14,31 @@
 
 \title{Adapting the Behavior of Reinforcement Learning Agents to Changing Action Spaces and Reward Functions}
 
-%\author{
-%\IEEEauthorblockN{Raul de la Rosa}
-%\IEEEauthorblockA{%\textit{ Department of Computer Science and Technology} \\
-%\textit{Universidad de los Andes}\\
-%Bogot\'a, Colombia \\
-%c.delarosap@uniandes.edu.co}
-%\and
-%\IEEEauthorblockN{Ivana Dusparic}
-%\IEEEauthorblockA{%\textit{School of Computer Science and Statistics} \\
-%\textit{Trinity College Dublin}\\
-%Dublin, Ireland \\
-%ivana.dusparic@tcd.ie}
-%\and
-%\IEEEauthorblockN{Nicol\'as Cardozo}
-%\IEEEauthorblockA{%\textit{Systems and Computing Engineering Department}\\
-%\textit{Universidad de los Andes}\\
-%Bogot\'a, Colombia \\
-%n.cardozo@uniandes.edu.co}
-%}
 \author{
-\IEEEauthorblockN{Author template}
+\IEEEauthorblockN{Raul de la Rosa}
 \IEEEauthorblockA{%\textit{ Department of Computer Science and Technology} \\
-\textit{University}\\
-City, Country \\
-university-email}
+\textit{Universidad de los Andes}\\
+Bogot\'a, Colombia \\
+c.delarosap@uniandes.edu.co}
+\and
+\IEEEauthorblockN{Ivana Dusparic}
+\IEEEauthorblockA{%\textit{School of Computer Science and Statistics} \\
+\textit{Trinity College Dublin}\\
+Dublin, Ireland \\
+ivana.dusparic@tcd.ie}
+\and
+\IEEEauthorblockN{Nicolas Cardozo}
+\IEEEauthorblockA{%\textit{Systems and Computing Engineering Department}\\
+\textit{Universidad de los Andes}\\
+Bogot\'a, Colombia \\
+n.cardozo@uniandes.edu.co}
 }
 
 \maketitle
 
 
-
-
 \begin{abstract}
-In Reinforcement Learning, agents learn to solve specific tasks through the exploration of the environment 
-in which they execute. Agents' behavior is specialized towards a given goal, and learnt from agent's 
-experience from the execution of its actions. While effective in optimizing the behavior for a specific goal, 
-the performance of agent's rapidly decreases when the environment conditions change.
-This paper introduces \adaptiverl, a self-adaptive Q-learning agent that enables on-the-fly adaptation 
-without full retraining. \adaptiverl leverages proactive environment monitoring and concept-drift 
-detection to trigger dynamic adjustment of learning and exploration parameters only when needed, 
-while preserving prior policy knowledge to mitigate catastrophic forgetting. Additionally, \adaptiverl 
-supports seamless incorporation of new actions into the agent’s action space. We validate our approach 
-on a standard RL benchmark with shifting reward functions and the introduction of a new actions. 
-Additionally we validate our approach in a realistic traffic signal control application to manage road 
-intersections. The results demonstrate the proposed approach evidences superior convergence 
-speed, resource efficiency, and continuous adaptation to evolving conditions, with respect to the 
-baseline.
+Reinforcement Learning (RL) agents often struggle in real-world applications where environmental conditions are non-stationary, particularly when reward functions shift or the available action space expands. This paper introduces \adaptiverl, a self-adaptive Q-learning framework that enables on-the-fly  adaptation without full retraining. By integrating concept drift detection with dynamic adjustments to learning and exploration hyperparameters, \adaptiverl adapts agents to changes in both the reward function and on-the-fly expansions of the agent's action space, while preserving prior policy knowledge to prevent catastrophic forgetting. We validate our approach using a Gridworld benchmark and a traffic signal control simulation. The results demonstrate that \adaptiverl achieves superior convergence speed and continuous adaptation compared to a standard Q-learning baseline, improving learning efficiency by up to 1.7x.
 \end{abstract}
 
 
@@ -82,6 +60,7 @@ Traffic Signal Control
 \input{conclusion}
 
 %\section*{Acknowledgment}
+%I thank my teachers and the university for their scholarship %support that made this work possible. As a non-native English %speaker. 
 
 \printbibliography
 
